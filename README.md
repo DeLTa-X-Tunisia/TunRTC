@@ -1,4 +1,4 @@
-# 🚀 TunRTC - Open-Source WebRTC Signaling Server
+<h1 align="center">🚀 TunRTC - Open-Source WebRTC Signaling Server</h1>
 
 <div align="center">
 
