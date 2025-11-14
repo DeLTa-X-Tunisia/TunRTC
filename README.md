@@ -1,16 +1,20 @@
-# 🎯 TunRTC - Open Source WebRTC Signaling Server
+# 🚀 TunRTC - Open-Source WebRTC Signaling Server
 
-<p align="center">
-  <img src="https://img.shields.io/badge/ASP.NET%20Core-8.0-512BD4?style=for-the-badge&logo=dotnet" alt="ASP.NET Core">
-  <img src="https://img.shields.io/badge/PostgreSQL-14+-4169E1?style=for-the-badge&logo=postgresql&logoColor=white" alt="PostgreSQL">
-  <img src="https://img.shields.io/badge/SignalR-WebSocket-00ADD8?style=for-the-badge" alt="SignalR">
-  <img src="https://img.shields.io/badge/WebRTC-Enabled-00B4AB?style=for-the-badge" alt="WebRTC">
-  <img src="https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge" alt="License">
-</p>
+<div align="center">
 
-**TunRTC** est un serveur WebRTC auto-hébergé avec API publique, permettant aux développeurs d'intégrer facilement des fonctionnalités de **voix et vidéo** dans leurs applications (web, mobile, desktop).
+[![.NET Version](https://img.shields.io/badge/.NET-8.0-512BD4?logo=dotnet)](https://dotnet.microsoft.com/)
+[![License](https://img.shields.io/badge/License-MIT-green.svg)](LICENSE)
+[![SignalR](https://img.shields.io/badge/SignalR-7.0-0078D4?logo=microsoft)](https://learn.microsoft.com/aspnet/core/signalr/)
+[![PostgreSQL](https://img.shields.io/badge/PostgreSQL-Ready-4169E1?logo=postgresql)](https://www.postgresql.org/)
+[![Docker](https://img.shields.io/badge/Docker-Supported-2496ED?logo=docker)](https://www.docker.com/)
 
-Similaire à **Agora** ou **Twilio**, mais **100% open source**, **gratuit** et **auto-hébergé**.
+**Serveur de signalisation WebRTC auto-hébergé avec API publique complète**
+
+Alternative open-source à Agora.io, Twilio Video, et autres services WebRTC propriétaires
+
+[🌐 Démo](http://localhost:5000/swagger) • [📖 Documentation](./Docs) • [🧪 Tests](./Tests) • [💻 SDKs](./SDKs)
+
+</div>
 
 ---
 
@@ -376,39 +380,84 @@ Ce projet est sous licence **MIT**. Voir [LICENSE](LICENSE) pour plus de détail
 
 ---
 
-## 🌟 Roadmap
+## 🎯 Roadmap
 
+- [x] Serveur de signalisation WebRTC fonctionnel
+- [x] API REST complète avec JWT
+- [x] SignalR Hub pour WebSockets
+- [x] SDKs JavaScript et C#
+- [x] Tests automatisés et interactifs
+- [x] Docker + Docker Compose
+- [x] GUI Launcher pour Windows
+- [ ] Support Redis pour scalabilité horizontale
+- [ ] Enregistrement vidéo/audio
+- [ ] Recording & Transcription
+- [ ] WebRTC SFU (Selective Forwarding Unit)
+- [ ] Dashboard d'administration
+- [ ] Statistiques en temps réel
+- [ ] Support Kubernetes
 - [ ] Support React Native SDK
 - [ ] Support Flutter SDK
-- [ ] Screen sharing support
-- [ ] Recording sessions
-- [ ] Analytics dashboard
-- [ ] SFU support (Selective Forwarding Unit)
-- [ ] E2E encryption
-- [ ] Mobile push notifications
-- [ ] Whiteboard integration
 
 ---
 
-## 💬 Support
+## 🤝 Contribution
 
-- **Issues:** [GitHub Issues](https://github.com/DeLTa-X-Tunisia/TunRTC/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/DeLTa-X-Tunisia/TunRTC/discussions)
-- **Email:** support@tunrtc.com
+Les contributions sont les bienvenues ! Voici comment participer :
+
+1. **Fork** le projet
+2. **Créer une branche** : `git checkout -b feature/AmazingFeature`
+3. **Commit** vos changements : `git commit -m 'Add AmazingFeature'`
+4. **Push** vers la branche : `git push origin feature/AmazingFeature`
+5. **Ouvrir une Pull Request**
+
+### Guidelines
+
+- Suivre les conventions de code existantes
+- Ajouter des tests pour les nouvelles fonctionnalités
+- Mettre à jour la documentation si nécessaire
+- S'assurer que tous les tests passent avant de soumettre
+
+---
+
+## 📄 Licence
+
+Ce projet est sous licence **MIT** - voir le fichier [LICENSE](LICENSE) pour plus de détails.
+
+---
+
+## 👥 Auteurs
+
+**DeLTa-X-Tunisia** - *Organisation GitHub*
+
+- GitHub : [@DeLTa-X-Tunisia](https://github.com/DeLTa-X-Tunisia)
+- Projet : [TunRTC](https://github.com/DeLTa-X-Tunisia/TunRTC)
 
 ---
 
 ## 🙏 Remerciements
 
-- [ASP.NET Core](https://dotnet.microsoft.com/apps/aspnet)
-- [SignalR](https://dotnet.microsoft.com/apps/aspnet/signalr)
-- [Coturn](https://github.com/coturn/coturn)
-- [WebRTC](https://webrtc.org/)
+- [Microsoft SignalR](https://github.com/dotnet/aspnetcore) - Framework WebSockets
+- [Coturn](https://github.com/coturn/coturn) - STUN/TURN server
+- [WebRTC](https://webrtc.org/) - Technologie de communication en temps réel
+- Communauté open-source pour les contributions et le feedback
 
 ---
 
-<p align="center">
-  Fait avec ❤️ en Tunisie
+## 📞 Support
+
+- 🐛 **Issues** : [GitHub Issues](https://github.com/DeLTa-X-Tunisia/TunRTC/issues)
+- 💬 **Discussions** : [GitHub Discussions](https://github.com/DeLTa-X-Tunisia/TunRTC/discussions)
+
+---
+
+<div align="center">
+
+**⭐ Si ce projet vous plaît, n'hésitez pas à lui donner une étoile sur GitHub ! ⭐**
+
+Made with ❤️ by DeLTa-X-Tunisia
+
+</div>
   <br>
   <strong>TunRTC</strong> - Open Source WebRTC Infrastructure
 </p>

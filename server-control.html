@@ -1,0 +1,413 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TunRTC - Server Control Panel</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            max-width: 600px;
+            width: 100%;
+        }
+
+        h1 {
+            color: #333;
+            text-align: center;
+            margin-bottom: 10px;
+            font-size: 32px;
+        }
+
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+            font-size: 14px;
+        }
+
+        .status-card {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+        }
+
+        .status-card h2 {
+            font-size: 24px;
+            margin-bottom: 10px;
+        }
+
+        .status-indicator {
+            font-size: 48px;
+            margin: 20px 0;
+            animation: pulse 2s infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.1); }
+        }
+
+        .status-text {
+            font-size: 18px;
+            font-weight: 600;
+        }
+
+        .server-url {
+            background: rgba(255,255,255,0.2);
+            padding: 10px;
+            border-radius: 8px;
+            margin-top: 15px;
+            font-family: monospace;
+            font-size: 16px;
+        }
+
+        .controls {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 30px;
+        }
+
+        button {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        button:active {
+            transform: translateY(0);
+        }
+
+        .btn-start {
+            background: #10b981;
+            color: white;
+        }
+
+        .btn-start:hover {
+            background: #059669;
+        }
+
+        .btn-stop {
+            background: #ef4444;
+            color: white;
+        }
+
+        .btn-stop:hover {
+            background: #dc2626;
+        }
+
+        .btn-restart {
+            background: #f59e0b;
+            color: white;
+        }
+
+        .btn-restart:hover {
+            background: #d97706;
+        }
+
+        .btn-test {
+            background: #3b82f6;
+            color: white;
+        }
+
+        .btn-test:hover {
+            background: #2563eb;
+        }
+
+        .btn-full {
+            grid-column: 1 / -1;
+        }
+
+        .logs {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 20px;
+            border-radius: 10px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Consolas', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+            padding: 5px;
+            border-left: 3px solid #667eea;
+            padding-left: 10px;
+        }
+
+        .log-entry.success {
+            border-left-color: #10b981;
+            color: #10b981;
+        }
+
+        .log-entry.error {
+            border-left-color: #ef4444;
+            color: #ef4444;
+        }
+
+        .log-entry.info {
+            border-left-color: #3b82f6;
+            color: #3b82f6;
+        }
+
+        .log-entry.warning {
+            border-left-color: #f59e0b;
+            color: #f59e0b;
+        }
+
+        .quick-links {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .quick-link {
+            display: block;
+            text-align: center;
+            padding: 12px;
+            background: #f3f4f6;
+            color: #667eea;
+            text-decoration: none;
+            border-radius: 8px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .quick-link:hover {
+            background: #667eea;
+            color: white;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid rgba(255,255,255,.3);
+            border-radius: 50%;
+            border-top-color: white;
+            animation: spin 1s ease-in-out infinite;
+        }
+
+        @keyframes spin {
+            to { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 TunRTC Server</h1>
+        <p class="subtitle">Control Panel</p>
+
+        <div class="status-card" id="statusCard">
+            <h2>Server Status</h2>
+            <div class="status-indicator" id="statusIcon">⏳</div>
+            <div class="status-text" id="statusText">Starting...</div>
+            <div class="server-url">http://localhost:5000</div>
+        </div>
+
+        <div class="controls">
+            <button class="btn-start" onclick="startServer()" id="btnStart" disabled>
+                ▶️ Start
+            </button>
+            <button class="btn-stop" onclick="stopServer()" id="btnStop" disabled>
+                ⏹️ Stop
+            </button>
+            <button class="btn-restart" onclick="restartServer()" id="btnRestart" disabled>
+                🔄 Restart
+            </button>
+            <button class="btn-test" onclick="checkHealth()" id="btnTest">
+                🔍 Test
+            </button>
+        </div>
+
+        <div class="quick-links">
+            <a href="http://localhost:5000" target="_blank" class="quick-link">
+                📊 Swagger UI
+            </a>
+            <a href="Tests/signalr-test.html" target="_blank" class="quick-link">
+                🧪 SignalR Tests
+            </a>
+        </div>
+
+        <div class="logs" id="logs">
+            <div class="log-entry info">🚀 Server Control Panel loaded</div>
+            <div class="log-entry info">⏳ Attempting to start server...</div>
+        </div>
+    </div>
+
+    <script>
+        let serverProcess = null;
+        let checkInterval = null;
+
+        function log(message, type = 'info') {
+            const logsDiv = document.getElementById('logs');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.textContent = `[${timestamp}] ${message}`;
+            logsDiv.appendChild(entry);
+            logsDiv.scrollTop = logsDiv.scrollHeight;
+        }
+
+        function updateStatus(status, icon, text) {
+            const statusCard = document.getElementById('statusCard');
+            const statusIcon = document.getElementById('statusIcon');
+            const statusText = document.getElementById('statusText');
+            
+            statusIcon.textContent = icon;
+            statusText.textContent = text;
+
+            if (status === 'running') {
+                statusCard.style.background = 'linear-gradient(135deg, #10b981 0%, #059669 100%)';
+                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStop').disabled = false;
+                document.getElementById('btnRestart').disabled = false;
+            } else if (status === 'stopped') {
+                statusCard.style.background = 'linear-gradient(135deg, #ef4444 0%, #dc2626 100%)';
+                document.getElementById('btnStart').disabled = false;
+                document.getElementById('btnStop').disabled = true;
+                document.getElementById('btnRestart').disabled = true;
+            } else {
+                statusCard.style.background = 'linear-gradient(135deg, #f59e0b 0%, #d97706 100%)';
+                document.getElementById('btnStart').disabled = true;
+                document.getElementById('btnStop').disabled = true;
+                document.getElementById('btnRestart').disabled = true;
+            }
+        }
+
+        async function checkHealth() {
+            try {
+                log('🔍 Checking server health...', 'info');
+                const response = await fetch('http://localhost:5000/health');
+                
+                if (response.ok) {
+                    const data = await response.json();
+                    log(`✅ Server is healthy! Status: ${data.status}`, 'success');
+                    updateStatus('running', '✅', 'Server Running');
+                    return true;
+                } else {
+                    throw new Error('Server returned non-OK status');
+                }
+            } catch (error) {
+                log('❌ Server is not responding', 'error');
+                updateStatus('stopped', '❌', 'Server Stopped');
+                return false;
+            }
+        }
+
+        async function startServer() {
+            log('🚀 Starting TunRTC server...', 'info');
+            updateStatus('starting', '⏳', 'Starting...');
+
+            try {
+                // Simuler le démarrage via PowerShell
+                // Dans un environnement réel, vous auriez besoin d'un backend pour exécuter des commandes
+                log('⚠️ Note: Please run this command manually in PowerShell:', 'warning');
+                log('dotnet run --project "C:\\Users\\User\\Desktop\\Tunisia\\TunRtc\\Server\\TunRTC.Server.csproj"', 'info');
+                
+                // Attendre un peu et vérifier
+                setTimeout(async () => {
+                    const isRunning = await checkHealth();
+                    if (isRunning) {
+                        log('✅ Server started successfully!', 'success');
+                    } else {
+                        log('⚠️ Please start the server manually using PowerShell', 'warning');
+                        updateStatus('stopped', '❌', 'Not Running');
+                    }
+                }, 3000);
+            } catch (error) {
+                log(`❌ Error: ${error.message}`, 'error');
+                updateStatus('stopped', '❌', 'Start Failed');
+            }
+        }
+
+        function stopServer() {
+            log('⏹️ Stopping server...', 'warning');
+            log('⚠️ Please stop the server manually (Ctrl+C in the terminal)', 'warning');
+            updateStatus('stopped', '❌', 'Server Stopped');
+        }
+
+        async function restartServer() {
+            log('🔄 Restarting server...', 'info');
+            stopServer();
+            setTimeout(startServer, 2000);
+        }
+
+        // Auto-start monitoring
+        async function startMonitoring() {
+            log('👀 Starting automatic health monitoring...', 'info');
+            
+            // Check immediately
+            const isRunning = await checkHealth();
+            
+            // If not running, show instructions
+            if (!isRunning) {
+                log('⚠️ Server is not running. Starting it now...', 'warning');
+                log('📝 Run this PowerShell command:', 'info');
+                log('dotnet run --project "C:\\Users\\User\\Desktop\\Tunisia\\TunRtc\\Server\\TunRTC.Server.csproj"', 'info');
+                
+                // Try to open PowerShell command (this will only work in certain contexts)
+                setTimeout(() => {
+                    log('💡 Tip: Keep the server terminal window open', 'info');
+                }, 1000);
+            }
+
+            // Check every 5 seconds
+            checkInterval = setInterval(async () => {
+                await checkHealth();
+            }, 5000);
+        }
+
+        // Initialize on page load
+        window.addEventListener('load', () => {
+            log('🎯 Initializing server control panel...', 'success');
+            startMonitoring();
+        });
+
+        // Cleanup on page unload
+        window.addEventListener('beforeunload', () => {
+            if (checkInterval) {
+                clearInterval(checkInterval);
+            }
+        });
+    </script>
+</body>
+</html>

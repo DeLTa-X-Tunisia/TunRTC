@@ -1,10 +1,11 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>TunRTC - SignalR WebSocket Test</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/7.0.14/signalr.min.js"></script>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -13,19 +14,50 @@
             padding: 20px;
             background: #f5f5f5;
         }
+
         .container {
             background: white;
             border-radius: 8px;
             padding: 20px;
             margin-bottom: 20px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
         }
-        h1 { color: #0066cc; margin-top: 0; }
-        h2 { color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
-        .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
-        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
-        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
-        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+
+        h1 {
+            color: #0066cc;
+            margin-top: 0;
+        }
+
+        h2 {
+            color: #333;
+            border-bottom: 2px solid #0066cc;
+            padding-bottom: 10px;
+        }
+
+        .status {
+            padding: 10px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+
+        .status.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .status.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
+        .status.info {
+            background: #d1ecf1;
+            color: #0c5460;
+            border: 1px solid #bee5eb;
+        }
+
         button {
             background: #0066cc;
             color: white;
@@ -36,15 +68,25 @@
             margin: 5px;
             font-size: 14px;
         }
-        button:hover { background: #0052a3; }
-        button:disabled { background: #cccccc; cursor: not-allowed; }
-        input, select {
+
+        button:hover {
+            background: #0052a3;
+        }
+
+        button:disabled {
+            background: #cccccc;
+            cursor: not-allowed;
+        }
+
+        input,
+        select {
             padding: 8px;
             border: 1px solid #ddd;
             border-radius: 4px;
             margin: 5px;
             font-size: 14px;
         }
+
         .log {
             background: #1e1e1e;
             color: #d4d4d4;
@@ -56,36 +98,54 @@
             font-size: 12px;
             margin-top: 10px;
         }
+
         .log-entry {
             margin: 5px 0;
             padding: 3px 0;
             border-bottom: 1px solid #333;
         }
-        .log-entry.success { color: #4ec9b0; }
-        .log-entry.error { color: #f48771; }
-        .log-entry.info { color: #569cd6; }
-        .log-entry.warning { color: #dcdcaa; }
+
+        .log-entry.success {
+            color: #4ec9b0;
+        }
+
+        .log-entry.error {
+            color: #f48771;
+        }
+
+        .log-entry.info {
+            color: #569cd6;
+        }
+
+        .log-entry.warning {
+            color: #dcdcaa;
+        }
+
         .participants {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
             gap: 10px;
             margin-top: 10px;
         }
+
         .participant-card {
             background: #f8f9fa;
             border: 1px solid #dee2e6;
             border-radius: 4px;
             padding: 10px;
         }
+
         .participant-card.me {
             border: 2px solid #0066cc;
             background: #e7f3ff;
         }
+
         .stats {
             display: flex;
             gap: 20px;
             margin: 10px 0;
         }
+
         .stat-box {
             background: #f8f9fa;
             padding: 15px;
@@ -93,11 +153,13 @@
             flex: 1;
             text-align: center;
         }
+
         .stat-value {
             font-size: 32px;
             font-weight: bold;
             color: #0066cc;
         }
+
         .stat-label {
             color: #666;
             font-size: 14px;
@@ -105,11 +167,12 @@
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🔥 TunRTC - SignalR WebSocket Test Suite</h1>
         <div id="connectionStatus" class="status info">⏳ Not Connected</div>
-        
+
         <h2>1️⃣ Authentication</h2>
         <div>
             <input type="email" id="email" value="demo@tunrtc.com" placeholder="Email">
@@ -121,7 +184,7 @@
         <h2>2️⃣ SignalR Connection</h2>
         <button onclick="connectSignalR()" id="connectBtn">🔌 Connect to SignalR Hub</button>
         <button onclick="disconnect()" id="disconnectBtn" disabled>🔌 Disconnect</button>
-        
+
         <h2>3️⃣ Session Management</h2>
         <div>
             <input type="text" id="sessionName" value="Live Test Session" placeholder="Session Name">
@@ -210,7 +273,7 @@
         async function login() {
             const email = document.getElementById('email').value;
             const password = document.getElementById('password').value;
-            
+
             try {
                 log(`🔑 Logging in as ${email}...`, 'info');
                 const response = await fetch('http://localhost:5000/api/auth/login', {
@@ -220,19 +283,30 @@
                 });
 
                 if (!response.ok) throw new Error('Login failed');
-                
+
                 const data = await response.json();
                 token = data.token;
-                currentUser = data.user;
                 
-                document.getElementById('authStatus').innerHTML = 
+                // Get user ID from /api/auth/me
+                const meResponse = await fetch('http://localhost:5000/api/auth/me', {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const userData = await meResponse.json();
+                
+                currentUser = {
+                    id: userData.id,
+                    username: data.username,
+                    email: data.email
+                };
+
+                document.getElementById('authStatus').innerHTML =
                     `<div class="status success">✅ Logged in as: ${currentUser.username} (${currentUser.email})</div>`;
-                
-                log(`✅ Login successful! User: ${currentUser.username}`, 'success');
+
+                log(`✅ Login successful! User: ${currentUser.username} (ID: ${currentUser.id})`, 'success');
                 document.getElementById('connectBtn').disabled = false;
             } catch (error) {
                 log(`❌ Login failed: ${error.message}`, 'error');
-                document.getElementById('authStatus').innerHTML = 
+                document.getElementById('authStatus').innerHTML =
                     `<div class="status error">❌ Login failed: ${error.message}</div>`;
             }
         }
@@ -245,7 +319,7 @@
 
             try {
                 log('🔌 Connecting to SignalR hub...', 'info');
-                
+
                 connection = new signalR.HubConnectionBuilder()
                     .withUrl('http://localhost:5000/hubs/signaling', {
                         accessTokenFactory: () => token
@@ -297,9 +371,18 @@
                     updateStats();
                 });
 
-                connection.on('UserStatusUpdated', (data) => {
-                    log(`🔔 ${data.username} status: Muted=${data.isMuted}, Video=${data.isVideoEnabled}`, 'info');
-                    updateParticipants(data.participants);
+                connection.on('ParticipantStatusChanged', (data) => {
+                    log(`🔔 User ${data.userId} status: Muted=${data.isMuted}, Video=${data.isVideoEnabled}`, 'info');
+                    // Update the participant card in the UI
+                    const participants = Array.from(document.querySelectorAll('.participant-card'));
+                    participants.forEach(card => {
+                        if (card.dataset.userId == data.userId) {
+                            const muteText = card.querySelector('.mute-status');
+                            const videoText = card.querySelector('.video-status');
+                            if (muteText) muteText.textContent = `🎤 ${data.isMuted ? 'Muted' : 'Unmuted'}`;
+                            if (videoText) videoText.textContent = `📹 ${data.isVideoEnabled ? 'Video On' : 'Video Off'}`;
+                        }
+                    });
                 });
 
                 connection.onreconnecting(() => {
@@ -321,10 +404,10 @@
                 });
 
                 await connection.start();
-                
+
                 log('✅ Connected to SignalR hub successfully!', 'success');
                 updateStatus('✅ Connected to SignalR Hub', 'success');
-                
+
                 document.getElementById('connectBtn').disabled = true;
                 document.getElementById('disconnectBtn').disabled = false;
                 document.getElementById('createSessionBtn').disabled = false;
@@ -345,7 +428,7 @@
 
         async function createSession() {
             const sessionName = document.getElementById('sessionName').value;
-            
+
             try {
                 log(`➕ Creating session: ${sessionName}...`, 'info');
                 const response = await fetch('http://localhost:5000/api/session/create', {
@@ -358,13 +441,13 @@
                 });
 
                 if (!response.ok) throw new Error('Failed to create session');
-                
+
                 const session = await response.json();
                 currentSession = session;
                 document.getElementById('joinSessionId').value = session.sessionId;
-                
+
                 log(`✅ Session created! ID: ${session.sessionId}`, 'success');
-                
+
             } catch (error) {
                 log(`❌ Failed to create session: ${error.message}`, 'error');
             }
@@ -372,7 +455,7 @@
 
         async function joinSession() {
             const sessionId = document.getElementById('joinSessionId').value;
-            
+
             if (!sessionId) {
                 log('❌ Please enter a session ID', 'error');
                 return;
@@ -380,7 +463,7 @@
 
             try {
                 log(`🚪 Joining session: ${sessionId}...`, 'info');
-                
+
                 // Join via REST API first
                 const response = await fetch('http://localhost:5000/api/session/join', {
                     method: 'POST',
@@ -392,20 +475,20 @@
                 });
 
                 if (!response.ok) throw new Error('Failed to join session');
-                
+
                 currentSession = await response.json();
-                
+
                 // Then join via SignalR
                 await connection.invoke('JoinSession', sessionId);
-                
+
                 log(`✅ Joined session: ${currentSession.name}`, 'success');
                 log(`Participants: ${currentSession.currentParticipants}/${currentSession.maxParticipants}`, 'info');
-                
+
                 stats.participants = currentSession.currentParticipants;
                 updateStats();
                 updateParticipants(currentSession.participants);
                 updateTargetUsers(currentSession.participants);
-                
+
                 document.getElementById('leaveSessionBtn').disabled = false;
                 document.getElementById('sendOfferBtn').disabled = false;
                 document.getElementById('sendAnswerBtn').disabled = false;
@@ -413,7 +496,7 @@
                 document.getElementById('sendMessageBtn').disabled = false;
                 document.getElementById('muteBtn').disabled = false;
                 document.getElementById('videoBtn').disabled = false;
-                
+
             } catch (error) {
                 log(`❌ Failed to join session: ${error.message}`, 'error');
             }
@@ -421,15 +504,15 @@
 
         async function leaveSession() {
             if (!currentSession) return;
-            
+
             try {
                 log('🚪 Leaving session...', 'info');
-                await connection.invoke('LeaveSession');
-                
+                await connection.invoke('LeaveSession', currentSession.sessionId);
+
                 log('✅ Left session', 'success');
                 currentSession = null;
                 disableSessionButtons();
-                
+
             } catch (error) {
                 log(`❌ Failed to leave session: ${error.message}`, 'error');
             }
@@ -499,9 +582,14 @@
         async function sendMessage() {
             const message = document.getElementById('chatMessage').value;
             if (!message) return;
+            
+            if (!currentSession || !currentSession.sessionId) {
+                log('❌ Please join a session first!', 'error');
+                return;
+            }
 
             try {
-                await connection.invoke('SendMessage', message);
+                await connection.invoke('SendMessage', currentSession.sessionId, message);
                 log(`💬 Sent: ${message}`, 'success');
                 document.getElementById('chatMessage').value = '';
             } catch (error) {
@@ -511,10 +599,19 @@
 
         async function toggleMute() {
             isMuted = !isMuted;
+            
+            if (!currentSession || !currentSession.sessionId) {
+                log('❌ Please join a session first!', 'error');
+                return;
+            }
+            
             try {
-                await connection.invoke('UpdateStatus', isMuted, isVideoEnabled);
+                await connection.invoke('UpdateStatus', currentSession.sessionId, isMuted, isVideoEnabled);
                 log(`🎤 Mute: ${isMuted}`, 'info');
                 document.getElementById('muteBtn').textContent = isMuted ? '🎤 Unmute' : '🎤 Mute';
+                
+                // Update local participant card
+                updateLocalParticipantStatus();
             } catch (error) {
                 log(`❌ Failed to update status: ${error.message}`, 'error');
             }
@@ -522,10 +619,19 @@
 
         async function toggleVideo() {
             isVideoEnabled = !isVideoEnabled;
+            
+            if (!currentSession || !currentSession.sessionId) {
+                log('❌ Please join a session first!', 'error');
+                return;
+            }
+            
             try {
-                await connection.invoke('UpdateStatus', isMuted, isVideoEnabled);
+                await connection.invoke('UpdateStatus', currentSession.sessionId, isMuted, isVideoEnabled);
                 log(`📹 Video: ${isVideoEnabled}`, 'info');
                 document.getElementById('videoBtn').textContent = isVideoEnabled ? '📹 Disable Video' : '📹 Enable Video';
+                
+                // Update local participant card
+                updateLocalParticipantStatus();
             } catch (error) {
                 log(`❌ Failed to update status: ${error.message}`, 'error');
             }
@@ -534,7 +640,7 @@
         function updateParticipants(participants) {
             const container = document.getElementById('participants');
             container.innerHTML = '';
-            
+
             if (!participants || participants.length === 0) {
                 container.innerHTML = '<p style="color: #666;">No participants yet</p>';
                 return;
@@ -543,10 +649,11 @@
             participants.forEach(p => {
                 const card = document.createElement('div');
                 card.className = 'participant-card' + (p.userId === currentUser.id ? ' me' : '');
+                card.dataset.userId = p.userId;
                 card.innerHTML = `
                     <strong>${p.username}</strong>${p.userId === currentUser.id ? ' (You)' : ''}<br>
-                    <small>🎤 ${p.isMuted ? 'Muted' : 'Unmuted'}</small><br>
-                    <small>📹 ${p.isVideoEnabled ? 'Video On' : 'Video Off'}</small>
+                    <small class="mute-status">🎤 ${p.isMuted ? 'Muted' : 'Unmuted'}</small><br>
+                    <small class="video-status">📹 ${p.isVideoEnabled ? 'Video On' : 'Video Off'}</small>
                 `;
                 container.appendChild(card);
             });
@@ -555,15 +662,29 @@
         function updateTargetUsers(participants) {
             const select = document.getElementById('targetUser');
             select.innerHTML = '<option value="">Select target user...</option>';
-            
+
             if (!participants) return;
-            
+
             participants.forEach(p => {
                 if (p.userId !== currentUser.id) {
                     const option = document.createElement('option');
                     option.value = p.userId;
                     option.textContent = p.username;
                     select.appendChild(option);
+                }
+            });
+        }
+
+        function updateLocalParticipantStatus() {
+            if (!currentUser) return;
+            
+            const participants = Array.from(document.querySelectorAll('.participant-card'));
+            participants.forEach(card => {
+                if (card.dataset.userId == currentUser.id) {
+                    const muteText = card.querySelector('.mute-status');
+                    const videoText = card.querySelector('.video-status');
+                    if (muteText) muteText.textContent = `🎤 ${isMuted ? 'Muted' : 'Unmuted'}`;
+                    if (videoText) videoText.textContent = `📹 ${isVideoEnabled ? 'Video On' : 'Video Off'}`;
                 }
             });
         }
@@ -586,4 +707,5 @@
         log('📌 Step 4: Test WebRTC signaling and chat', 'info');
     </script>
 </body>
+
 </html>

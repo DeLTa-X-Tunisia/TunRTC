@@ -1,0 +1,22 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <UseWPF>true</UseWPF>
+    <Nullable>enable</Nullable>
+    <AssemblyName>TunRTC.Launcher</AssemblyName>
+    <RootNamespace>TunRTC.Launcher</RootNamespace>
+    <Version>1.0.0</Version>
+    <Authors>TunRTC Project</Authors>
+    <Company>DeLTa-X-Tunisia</Company>
+    <Product>TunRTC Server Launcher</Product>
+    <Description>Simple GUI launcher for TunRTC WebRTC Server</Description>
+    <Copyright>Copyright © 2025 DeLTa-X-Tunisia</Copyright>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="System.Diagnostics.Process" Version="4.3.0" />
+  </ItemGroup>
+
+</Project>
