@@ -58,7 +58,7 @@ Alternative open-source à Agora.io, Twilio Video, et autres services WebRTC pro
 
 ```
 ┌─────────────────────────────────────────────────────────┐
-│                     Client Apps                          │
+│                     Client Apps                         │
 │  (Web, Mobile, Desktop via SDK JS/C#)                   │
 └───────────────────┬─────────────────────────────────────┘
                     │
@@ -76,7 +76,7 @@ Alternative open-source à Agora.io, Twilio Video, et autres services WebRTC pro
         └───────────────────────┘
                     
         ┌───────────────────────┐
-        │  Coturn (STUN/TURN)  │
+        │  Coturn (STUN/TURN)   │
         │   NAT Traversal       │
         └───────────────────────┘
 ```
