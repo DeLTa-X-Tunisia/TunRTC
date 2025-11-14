@@ -286,13 +286,13 @@
 
                 const data = await response.json();
                 token = data.token;
-                
+
                 // Get user ID from /api/auth/me
                 const meResponse = await fetch('http://localhost:5000/api/auth/me', {
                     headers: { 'Authorization': `Bearer ${token}` }
                 });
                 const userData = await meResponse.json();
-                
+
                 currentUser = {
                     id: userData.id,
                     username: data.username,
@@ -582,7 +582,7 @@
         async function sendMessage() {
             const message = document.getElementById('chatMessage').value;
             if (!message) return;
-            
+
             if (!currentSession || !currentSession.sessionId) {
                 log('❌ Please join a session first!', 'error');
                 return;
@@ -599,17 +599,17 @@
 
         async function toggleMute() {
             isMuted = !isMuted;
-            
+
             if (!currentSession || !currentSession.sessionId) {
                 log('❌ Please join a session first!', 'error');
                 return;
             }
-            
+
             try {
                 await connection.invoke('UpdateStatus', currentSession.sessionId, isMuted, isVideoEnabled);
                 log(`🎤 Mute: ${isMuted}`, 'info');
                 document.getElementById('muteBtn').textContent = isMuted ? '🎤 Unmute' : '🎤 Mute';
-                
+
                 // Update local participant card
                 updateLocalParticipantStatus();
             } catch (error) {
@@ -619,17 +619,17 @@
 
         async function toggleVideo() {
             isVideoEnabled = !isVideoEnabled;
-            
+
             if (!currentSession || !currentSession.sessionId) {
                 log('❌ Please join a session first!', 'error');
                 return;
             }
-            
+
             try {
                 await connection.invoke('UpdateStatus', currentSession.sessionId, isMuted, isVideoEnabled);
                 log(`📹 Video: ${isVideoEnabled}`, 'info');
                 document.getElementById('videoBtn').textContent = isVideoEnabled ? '📹 Disable Video' : '📹 Enable Video';
-                
+
                 // Update local participant card
                 updateLocalParticipantStatus();
             } catch (error) {
@@ -677,7 +677,7 @@
 
         function updateLocalParticipantStatus() {
             if (!currentUser) return;
-            
+
             const participants = Array.from(document.querySelectorAll('.participant-card'));
             participants.forEach(card => {
                 if (card.dataset.userId == currentUser.id) {

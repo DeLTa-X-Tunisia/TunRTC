@@ -48,7 +48,8 @@ if ($LASTEXITCODE -eq 0) {
             explorer.exe $outputPath
         }
     }
-} else {
+}
+else {
     Write-Host ""
     Write-Host "❌ Échec de la publication" -ForegroundColor Red
     Write-Host "Vérifiez les erreurs ci-dessus" -ForegroundColor Yellow

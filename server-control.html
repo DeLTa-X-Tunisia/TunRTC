@@ -1,5 +1,6 @@
 <!DOCTYPE html>
 <html lang="fr">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -25,7 +26,7 @@
             background: white;
             border-radius: 20px;
             padding: 40px;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
             max-width: 600px;
             width: 100%;
         }
@@ -66,8 +67,15 @@
         }
 
         @keyframes pulse {
-            0%, 100% { transform: scale(1); }
-            50% { transform: scale(1.1); }
+
+            0%,
+            100% {
+                transform: scale(1);
+            }
+
+            50% {
+                transform: scale(1.1);
+            }
         }
 
         .status-text {
@@ -76,7 +84,7 @@
         }
 
         .server-url {
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             padding: 10px;
             border-radius: 8px;
             margin-top: 15px;
@@ -105,7 +113,7 @@
 
         button:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         button:active {
@@ -220,17 +228,20 @@
             display: inline-block;
             width: 20px;
             height: 20px;
-            border: 3px solid rgba(255,255,255,.3);
+            border: 3px solid rgba(255, 255, 255, .3);
             border-radius: 50%;
             border-top-color: white;
             animation: spin 1s ease-in-out infinite;
         }
 
         @keyframes spin {
-            to { transform: rotate(360deg); }
+            to {
+                transform: rotate(360deg);
+            }
         }
     </style>
 </head>
+
 <body>
     <div class="container">
         <h1>🔥 TunRTC Server</h1>
@@ -291,7 +302,7 @@
             const statusCard = document.getElementById('statusCard');
             const statusIcon = document.getElementById('statusIcon');
             const statusText = document.getElementById('statusText');
-            
+
             statusIcon.textContent = icon;
             statusText.textContent = text;
 
@@ -317,7 +328,7 @@
             try {
                 log('🔍 Checking server health...', 'info');
                 const response = await fetch('http://localhost:5000/health');
-                
+
                 if (response.ok) {
                     const data = await response.json();
                     log(`✅ Server is healthy! Status: ${data.status}`, 'success');
@@ -342,7 +353,7 @@
                 // Dans un environnement réel, vous auriez besoin d'un backend pour exécuter des commandes
                 log('⚠️ Note: Please run this command manually in PowerShell:', 'warning');
                 log('dotnet run --project "C:\\Users\\User\\Desktop\\Tunisia\\TunRtc\\Server\\TunRTC.Server.csproj"', 'info');
-                
+
                 // Attendre un peu et vérifier
                 setTimeout(async () => {
                     const isRunning = await checkHealth();
@@ -374,16 +385,16 @@
         // Auto-start monitoring
         async function startMonitoring() {
             log('👀 Starting automatic health monitoring...', 'info');
-            
+
             // Check immediately
             const isRunning = await checkHealth();
-            
+
             // If not running, show instructions
             if (!isRunning) {
                 log('⚠️ Server is not running. Starting it now...', 'warning');
                 log('📝 Run this PowerShell command:', 'info');
                 log('dotnet run --project "C:\\Users\\User\\Desktop\\Tunisia\\TunRtc\\Server\\TunRTC.Server.csproj"', 'info');
-                
+
                 // Try to open PowerShell command (this will only work in certain contexts)
                 setTimeout(() => {
                     log('💡 Tip: Keep the server terminal window open', 'info');
@@ -410,4 +421,5 @@
         });
     </script>
 </body>
+
 </html>

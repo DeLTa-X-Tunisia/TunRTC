@@ -1,41 +1,56 @@
 <Window x:Class="TunRTC.Launcher.MainWindow"
         xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
         xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-        Title="TunRTC Server Launcher" Height="600" Width="900"
+        Title="TunRTC Server Launcher"
+        Height="600"
+        Width="900"
         WindowStartupLocation="CenterScreen"
         ResizeMode="CanMinimize">
     <Window.Resources>
         <Style TargetType="Button">
-            <Setter Property="Padding" Value="15,8"/>
-            <Setter Property="Margin" Value="5"/>
-            <Setter Property="FontSize" Value="14"/>
-            <Setter Property="FontWeight" Value="SemiBold"/>
-            <Setter Property="Cursor" Value="Hand"/>
-            <Setter Property="Background" Value="#2196F3"/>
-            <Setter Property="Foreground" Value="White"/>
-            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="Padding"
+                    Value="15,8"/>
+            <Setter Property="Margin"
+                    Value="5"/>
+            <Setter Property="FontSize"
+                    Value="14"/>
+            <Setter Property="FontWeight"
+                    Value="SemiBold"/>
+            <Setter Property="Cursor"
+                    Value="Hand"/>
+            <Setter Property="Background"
+                    Value="#2196F3"/>
+            <Setter Property="Foreground"
+                    Value="White"/>
+            <Setter Property="BorderThickness"
+                    Value="0"/>
             <Setter Property="Template">
                 <Setter.Value>
                     <ControlTemplate TargetType="Button">
-                        <Border Background="{TemplateBinding Background}" 
+                        <Border Background="{TemplateBinding Background}"
                                 CornerRadius="4"
                                 Padding="{TemplateBinding Padding}">
-                            <ContentPresenter HorizontalAlignment="Center" VerticalAlignment="Center"/>
+                            <ContentPresenter HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"/>
                         </Border>
                     </ControlTemplate>
                 </Setter.Value>
             </Setter>
             <Style.Triggers>
-                <Trigger Property="IsEnabled" Value="False">
-                    <Setter Property="Opacity" Value="0.6"/>
+                <Trigger Property="IsEnabled"
+                        Value="False">
+                    <Setter Property="Opacity"
+                            Value="0.6"/>
                 </Trigger>
-                <Trigger Property="IsMouseOver" Value="True">
-                    <Setter Property="Background" Value="#1976D2"/>
+                <Trigger Property="IsMouseOver"
+                        Value="True">
+                    <Setter Property="Background"
+                            Value="#1976D2"/>
                 </Trigger>
             </Style.Triggers>
         </Style>
     </Window.Resources>
-    
+
     <Grid Background="#F5F5F5">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
@@ -45,87 +60,167 @@
         </Grid.RowDefinitions>
 
         <!-- Header -->
-        <Border Grid.Row="0" Background="#1976D2" Padding="20">
+        <Border Grid.Row="0"
+                Background="#1976D2"
+                Padding="20">
             <StackPanel>
-                <TextBlock Text="TunRTC Server Launcher" 
-                          FontSize="24" 
-                          FontWeight="Bold" 
-                          Foreground="White"
-                          HorizontalAlignment="Center"/>
-                <TextBlock Text="Open-Source WebRTC Signaling Server" 
-                          FontSize="12" 
-                          Foreground="#E3F2FD"
-                          HorizontalAlignment="Center"
-                          Margin="0,5,0,0"/>
+                <TextBlock Text="TunRTC Server Launcher"
+                           FontSize="24"
+                           FontWeight="Bold"
+                           Foreground="White"
+                           HorizontalAlignment="Center"/>
+                <TextBlock Text="Open-Source WebRTC Signaling Server"
+                           FontSize="12"
+                           Foreground="#E3F2FD"
+                           HorizontalAlignment="Center"
+                           Margin="0,5,0,0"/>
             </StackPanel>
         </Border>
 
         <!-- Status Panel -->
-        <Border Grid.Row="1" Background="White" Margin="15,15,15,10" 
-                CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1">
+        <Border Grid.Row="1"
+                Background="White"
+                Margin="15,15,15,10"
+                CornerRadius="4"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1">
             <Grid Margin="20">
                 <Grid.ColumnDefinitions>
                     <ColumnDefinition Width="*"/>
                     <ColumnDefinition Width="Auto"/>
                 </Grid.ColumnDefinitions>
-                
+
                 <StackPanel Grid.Column="0">
-                    <TextBlock Text="Server Status" FontSize="16" FontWeight="SemiBold" Foreground="#424242"/>
-                    <StackPanel Orientation="Horizontal" Margin="0,8,0,0">
-                        <Ellipse x:Name="StatusIndicator" Width="12" Height="12" Fill="#F44336" Margin="0,0,8,0"/>
-                        <TextBlock x:Name="StatusText" Text="Arrêté" FontSize="14" Foreground="#757575"/>
+                    <TextBlock Text="Server Status"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="#424242"/>
+                    <StackPanel Orientation="Horizontal"
+                            Margin="0,8,0,0">
+                        <Ellipse x:Name="StatusIndicator"
+                                Width="12"
+                                Height="12"
+                                Fill="#F44336"
+                                Margin="0,0,8,0"/>
+                        <TextBlock x:Name="StatusText"
+                                Text="Arrêté"
+                                FontSize="14"
+                                Foreground="#757575"/>
                     </StackPanel>
-                    <TextBlock x:Name="ServerUrlText" Text="" FontSize="12" Foreground="#2196F3" Margin="0,5,0,0" Visibility="Collapsed"/>
+                    <TextBlock x:Name="ServerUrlText"
+                            Text=""
+                            FontSize="12"
+                            Foreground="#2196F3"
+                            Margin="0,5,0,0"
+                            Visibility="Collapsed"/>
                 </StackPanel>
 
-                <StackPanel Grid.Column="1" Orientation="Horizontal">
-                    <Button x:Name="StartButton" Content="▶ Démarrer" Background="#4CAF50" Click="StartButton_Click" Width="120"/>
-                    <Button x:Name="StopButton" Content="⬛ Arrêter" Background="#F44336" Click="StopButton_Click" Width="120" IsEnabled="False"/>
-                    <Button x:Name="RestartButton" Content="🔄 Redémarrer" Background="#FF9800" Click="RestartButton_Click" Width="120" IsEnabled="False"/>
+                <StackPanel Grid.Column="1"
+                        Orientation="Horizontal">
+                    <Button x:Name="StartButton"
+                            Content="▶ Démarrer"
+                            Background="#4CAF50"
+                            Click="StartButton_Click"
+                            Width="120"/>
+                    <Button x:Name="StopButton"
+                            Content="⬛ Arrêter"
+                            Background="#F44336"
+                            Click="StopButton_Click"
+                            Width="120"
+                            IsEnabled="False"/>
+                    <Button x:Name="RestartButton"
+                            Content="🔄 Redémarrer"
+                            Background="#FF9800"
+                            Click="RestartButton_Click"
+                            Width="120"
+                            IsEnabled="False"/>
                 </StackPanel>
             </Grid>
         </Border>
 
         <!-- Log Viewer -->
-        <Border Grid.Row="2" Background="White" Margin="15,10,15,10" 
-                CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1">
+        <Border Grid.Row="2"
+                Background="White"
+                Margin="15,10,15,10"
+                CornerRadius="4"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1">
             <Grid Margin="20">
                 <Grid.RowDefinitions>
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-                
-                <StackPanel Grid.Row="0" Orientation="Horizontal" Margin="0,0,0,10">
-                    <TextBlock Text="Logs du serveur" FontSize="16" FontWeight="SemiBold" Foreground="#424242"/>
-                    <Button x:Name="ClearLogsButton" Content="🗑 Effacer" Background="#9E9E9E" Click="ClearLogsButton_Click" 
-                            Width="100" Margin="10,0,0,0" Padding="8,4" FontSize="12"/>
+
+                <StackPanel Grid.Row="0"
+                        Orientation="Horizontal"
+                        Margin="0,0,0,10">
+                    <TextBlock Text="Logs du serveur"
+                            FontSize="16"
+                            FontWeight="SemiBold"
+                            Foreground="#424242"/>
+                    <Button x:Name="ClearLogsButton"
+                            Content="🗑 Effacer"
+                            Background="#9E9E9E"
+                            Click="ClearLogsButton_Click"
+                            Width="100"
+                            Margin="10,0,0,0"
+                            Padding="8,4"
+                            FontSize="12"/>
                 </StackPanel>
 
-                <Border Grid.Row="1" BorderBrush="#E0E0E0" BorderThickness="1" CornerRadius="2">
-                    <ScrollViewer x:Name="LogScrollViewer" VerticalScrollBarVisibility="Auto">
-                        <TextBox x:Name="LogTextBox" 
-                                Background="#FAFAFA"
-                                Foreground="#212121"
-                                FontFamily="Consolas"
-                                FontSize="12"
-                                IsReadOnly="True"
-                                BorderThickness="0"
-                                TextWrapping="Wrap"
-                                VerticalAlignment="Stretch"
-                                Padding="10"/>
+                <Border Grid.Row="1"
+                        BorderBrush="#E0E0E0"
+                        BorderThickness="1"
+                        CornerRadius="2">
+                    <ScrollViewer x:Name="LogScrollViewer"
+                            VerticalScrollBarVisibility="Auto">
+                        <TextBox x:Name="LogTextBox"
+                                 Background="#FAFAFA"
+                                 Foreground="#212121"
+                                 FontFamily="Consolas"
+                                 FontSize="12"
+                                 IsReadOnly="True"
+                                 BorderThickness="0"
+                                 TextWrapping="Wrap"
+                                 VerticalAlignment="Stretch"
+                                 Padding="10"/>
                     </ScrollViewer>
                 </Border>
             </Grid>
         </Border>
 
         <!-- Quick Links -->
-        <Border Grid.Row="3" Background="White" Margin="15,10,15,15" 
-                CornerRadius="4" BorderBrush="#E0E0E0" BorderThickness="1">
-            <StackPanel Margin="20,15" Orientation="Horizontal" HorizontalAlignment="Center">
-                <TextBlock Text="Accès rapide:" FontSize="14" Foreground="#757575" VerticalAlignment="Center" Margin="0,0,15,0"/>
-                <Button x:Name="OpenSwaggerButton" Content="📖 Swagger UI" Background="#673AB7" Click="OpenSwaggerButton_Click" Width="140" IsEnabled="False"/>
-                <Button x:Name="OpenTestButton" Content="🧪 Tests SignalR" Background="#009688" Click="OpenTestButton_Click" Width="140" IsEnabled="False"/>
-                <Button x:Name="OpenFolderButton" Content="📁 Ouvrir dossier" Background="#607D8B" Click="OpenFolderButton_Click" Width="140"/>
+        <Border Grid.Row="3"
+                Background="White"
+                Margin="15,10,15,15"
+                CornerRadius="4"
+                BorderBrush="#E0E0E0"
+                BorderThickness="1">
+            <StackPanel Margin="20,15"
+                    Orientation="Horizontal"
+                    HorizontalAlignment="Center">
+                <TextBlock Text="Accès rapide:"
+                        FontSize="14"
+                        Foreground="#757575"
+                        VerticalAlignment="Center"
+                        Margin="0,0,15,0"/>
+                <Button x:Name="OpenSwaggerButton"
+                        Content="📖 Swagger UI"
+                        Background="#673AB7"
+                        Click="OpenSwaggerButton_Click"
+                        Width="140"
+                        IsEnabled="False"/>
+                <Button x:Name="OpenTestButton"
+                        Content="🧪 Tests SignalR"
+                        Background="#009688"
+                        Click="OpenTestButton_Click"
+                        Width="140"
+                        IsEnabled="False"/>
+                <Button x:Name="OpenFolderButton"
+                        Content="📁 Ouvrir dossier"
+                        Background="#607D8B"
+                        Click="OpenFolderButton_Click"
+                        Width="140"/>
             </StackPanel>
         </Border>
     </Grid>

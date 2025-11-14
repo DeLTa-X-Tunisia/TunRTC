@@ -28,7 +28,7 @@ namespace TunRTC.Launcher
             // Get the project root directory (one level up from ServerLauncher)
             string currentDir = AppDomain.CurrentDomain.BaseDirectory;
             projectPath = Path.GetFullPath(Path.Combine(currentDir, "..", "..", "..", ".."));
-            
+
             // Verify the Server directory exists
             string serverProjectPath = Path.Combine(projectPath, "Server", "TunRTC.Server.csproj");
             if (!File.Exists(serverProjectPath))
@@ -55,7 +55,7 @@ namespace TunRTC.Launcher
                 using var client = new System.Net.Http.HttpClient();
                 client.Timeout = TimeSpan.FromSeconds(2);
                 var response = await client.GetAsync($"{serverUrl}/health");
-                
+
                 if (response.IsSuccessStatusCode)
                 {
                     UpdateServerStatus(true);
@@ -81,7 +81,7 @@ namespace TunRTC.Launcher
                     StatusText.Text = "En ligne";
                     ServerUrlText.Text = $"🌐 {serverUrl}";
                     ServerUrlText.Visibility = Visibility.Visible;
-                    
+
                     StartButton.IsEnabled = false;
                     StopButton.IsEnabled = true;
                     RestartButton.IsEnabled = true;
@@ -93,7 +93,7 @@ namespace TunRTC.Launcher
                     StatusIndicator.Fill = new SolidColorBrush(Color.FromRgb(244, 67, 54)); // Red
                     StatusText.Text = "Arrêté";
                     ServerUrlText.Visibility = Visibility.Collapsed;
-                    
+
                     StartButton.IsEnabled = true;
                     StopButton.IsEnabled = false;
                     RestartButton.IsEnabled = false;
@@ -108,9 +108,9 @@ namespace TunRTC.Launcher
             try
             {
                 LogMessage("🚀 Démarrage du serveur TunRTC...");
-                
+
                 string serverProjectPath = Path.Combine(projectPath, "Server", "TunRTC.Server.csproj");
-                
+
                 if (!File.Exists(serverProjectPath))
                 {
                     LogMessage($"❌ ERREUR: Projet introuvable: {serverProjectPath}");
@@ -168,7 +168,7 @@ namespace TunRTC.Launcher
             try
             {
                 LogMessage("⏹️ Arrêt du serveur...");
-                
+
                 if (serverProcess != null && !serverProcess.HasExited)
                 {
                     serverProcess.Kill(true);
@@ -211,7 +211,7 @@ namespace TunRTC.Launcher
             {
                 Process.Start(new ProcessStartInfo
                 {
-                    FileName = $"{serverUrl}/swagger",
+                    FileName = serverUrl, // Swagger is at root
                     UseShellExecute = true
                 });
                 LogMessage("📖 Swagger UI ouvert dans le navigateur");
@@ -278,7 +278,7 @@ namespace TunRTC.Launcher
         protected override void OnClosed(EventArgs e)
         {
             healthCheckTimer?.Stop();
-            
+
             if (serverProcess != null && !serverProcess.HasExited)
             {
                 var result = MessageBox.Show(
