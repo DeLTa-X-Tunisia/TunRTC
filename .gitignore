@@ -1,0 +1,75 @@
+# Ignore build outputs
+bin/
+obj/
+out/
+
+# Ignore user-specific files
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Ignore Visual Studio files
+.vs/
+*.vsidx
+*.vspscc
+*.vssscc
+.builds
+*.pidb
+*.svclog
+*.scc
+
+# Ignore ReSharper
+_ReSharper*/
+*.DotSettings.user
+
+# Ignore NuGet
+*.nupkg
+*.snupkg
+packages/
+.nuget/
+project.lock.json
+project.fragment.lock.json
+artifacts/
+
+# Ignore Rider
+.idea/
+*.sln.iml
+
+# Ignore Node.js
+node_modules/
+npm-debug.log
+yarn-error.log
+
+# Ignore logs
+*.log
+logs/
+
+# Ignore database files
+*.db
+*.sqlite
+*.sqlite3
+
+# Ignore environment files
+.env
+.env.local
+.env.production
+
+# Ignore OS files
+.DS_Store
+Thumbs.db
+*.swp
+*~
+
+# Ignore sensitive files
+appsettings.Production.json
+appsettings.*.json
+!appsettings.json
+!appsettings.Development.json
+
+# Ignore migration files (optional)
+**/Migrations/
+
+# Ignore build artifacts
+dist/
+build/

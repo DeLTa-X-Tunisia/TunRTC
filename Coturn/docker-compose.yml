@@ -1,0 +1,15 @@
+version: '3.8'
+
+services:
+  coturn:
+    image: coturn/coturn:latest
+    container_name: tunrtc-coturn
+    network_mode: host
+    volumes:
+      - ./config/turnserver.conf:/etc/coturn/turnserver.conf
+      - coturn-logs:/var/log/coturn
+    restart: unless-stopped
+    command: ["-c", "/etc/coturn/turnserver.conf"]
+
+volumes:
+  coturn-logs:

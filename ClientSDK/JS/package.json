@@ -1,0 +1,31 @@
+{
+  "name": "tunrtc-client",
+  "version": "1.0.0",
+  "description": "TunRTC JavaScript SDK for WebRTC voice and video communication",
+  "main": "tunrtc-client.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [
+    "webrtc",
+    "video",
+    "audio",
+    "signaling",
+    "real-time",
+    "communication",
+    "tunrtc"
+  ],
+  "author": "TunRTC",
+  "license": "MIT",
+  "dependencies": {
+    "@microsoft/signalr": "^8.0.0"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/yourorg/TunRTC"
+  },
+  "bugs": {
+    "url": "https://github.com/yourorg/TunRTC/issues"
+  },
+  "homepage": "https://github.com/yourorg/TunRTC#readme"
+}

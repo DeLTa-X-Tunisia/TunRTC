@@ -1,0 +1,24 @@
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 17
+VisualStudioVersion = 17.5.2.0
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TunRTC.Server", "Server\TunRTC.Server.csproj", "{8DC039D5-5ACD-2F7C-D54E-6E32A84EDDD1}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{8DC039D5-5ACD-2F7C-D54E-6E32A84EDDD1}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{8DC039D5-5ACD-2F7C-D54E-6E32A84EDDD1}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{8DC039D5-5ACD-2F7C-D54E-6E32A84EDDD1}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{8DC039D5-5ACD-2F7C-D54E-6E32A84EDDD1}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {74770CF6-9FCA-4472-813E-C4E72DA505F3}
+	EndGlobalSection
+EndGlobal
