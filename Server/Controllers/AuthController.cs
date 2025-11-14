@@ -27,15 +27,15 @@ public class AuthController : ControllerBase
     [ProducesResponseType(400)]
     public async Task<IActionResult> Register([FromBody] RegisterRequest request)
     {
-        if (string.IsNullOrWhiteSpace(request.Username) || 
-            string.IsNullOrWhiteSpace(request.Email) || 
+        if (string.IsNullOrWhiteSpace(request.Username) ||
+            string.IsNullOrWhiteSpace(request.Email) ||
             string.IsNullOrWhiteSpace(request.Password))
         {
             return BadRequest(new { message = "All fields are required" });
         }
 
         var result = await _authService.RegisterAsync(request);
-        
+
         if (result == null)
         {
             return BadRequest(new { message = "User already exists" });
@@ -59,7 +59,7 @@ public class AuthController : ControllerBase
         }
 
         var result = await _authService.LoginAsync(request);
-        
+
         if (result == null)
         {
             return Unauthorized(new { message = "Invalid credentials" });
@@ -79,14 +79,14 @@ public class AuthController : ControllerBase
     public async Task<IActionResult> GetCurrentUser()
     {
         var userIdClaim = User.FindFirst(ClaimTypes.NameIdentifier)?.Value;
-        
+
         if (userIdClaim == null || !int.TryParse(userIdClaim, out var userId))
         {
             return Unauthorized();
         }
 
         var user = await _authService.GetUserByIdAsync(userId);
-        
+
         if (user == null)
         {
             return NotFound(new { message = "User not found" });

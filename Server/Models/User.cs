@@ -9,7 +9,7 @@ public class User
     public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     public DateTime? LastLoginAt { get; set; }
     public bool IsActive { get; set; } = true;
-    
+
     // Navigation properties
     public ICollection<Session> CreatedSessions { get; set; } = new List<Session>();
     public ICollection<SessionParticipant> Participants { get; set; } = new List<SessionParticipant>();

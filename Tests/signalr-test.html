@@ -1,0 +1,589 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>TunRTC - SignalR WebSocket Test</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.0/signalr.min.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+        .container {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+        h1 { color: #0066cc; margin-top: 0; }
+        h2 { color: #333; border-bottom: 2px solid #0066cc; padding-bottom: 10px; }
+        .status { padding: 10px; border-radius: 4px; margin: 10px 0; }
+        .status.success { background: #d4edda; color: #155724; border: 1px solid #c3e6cb; }
+        .status.error { background: #f8d7da; color: #721c24; border: 1px solid #f5c6cb; }
+        .status.info { background: #d1ecf1; color: #0c5460; border: 1px solid #bee5eb; }
+        button {
+            background: #0066cc;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+            font-size: 14px;
+        }
+        button:hover { background: #0052a3; }
+        button:disabled { background: #cccccc; cursor: not-allowed; }
+        input, select {
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin: 5px;
+            font-size: 14px;
+        }
+        .log {
+            background: #1e1e1e;
+            color: #d4d4d4;
+            padding: 15px;
+            border-radius: 4px;
+            max-height: 400px;
+            overflow-y: auto;
+            font-family: 'Consolas', 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+        .log-entry {
+            margin: 5px 0;
+            padding: 3px 0;
+            border-bottom: 1px solid #333;
+        }
+        .log-entry.success { color: #4ec9b0; }
+        .log-entry.error { color: #f48771; }
+        .log-entry.info { color: #569cd6; }
+        .log-entry.warning { color: #dcdcaa; }
+        .participants {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 10px;
+            margin-top: 10px;
+        }
+        .participant-card {
+            background: #f8f9fa;
+            border: 1px solid #dee2e6;
+            border-radius: 4px;
+            padding: 10px;
+        }
+        .participant-card.me {
+            border: 2px solid #0066cc;
+            background: #e7f3ff;
+        }
+        .stats {
+            display: flex;
+            gap: 20px;
+            margin: 10px 0;
+        }
+        .stat-box {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 4px;
+            flex: 1;
+            text-align: center;
+        }
+        .stat-value {
+            font-size: 32px;
+            font-weight: bold;
+            color: #0066cc;
+        }
+        .stat-label {
+            color: #666;
+            font-size: 14px;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🔥 TunRTC - SignalR WebSocket Test Suite</h1>
+        <div id="connectionStatus" class="status info">⏳ Not Connected</div>
+        
+        <h2>1️⃣ Authentication</h2>
+        <div>
+            <input type="email" id="email" value="demo@tunrtc.com" placeholder="Email">
+            <input type="password" id="password" value="demo123" placeholder="Password">
+            <button onclick="login()">🔑 Login</button>
+        </div>
+        <div id="authStatus"></div>
+
+        <h2>2️⃣ SignalR Connection</h2>
+        <button onclick="connectSignalR()" id="connectBtn">🔌 Connect to SignalR Hub</button>
+        <button onclick="disconnect()" id="disconnectBtn" disabled>🔌 Disconnect</button>
+        
+        <h2>3️⃣ Session Management</h2>
+        <div>
+            <input type="text" id="sessionName" value="Live Test Session" placeholder="Session Name">
+            <button onclick="createSession()" id="createSessionBtn" disabled>➕ Create Session</button>
+        </div>
+        <div>
+            <input type="text" id="joinSessionId" placeholder="Session ID to join">
+            <button onclick="joinSession()" id="joinSessionBtn" disabled>🚪 Join Session</button>
+            <button onclick="leaveSession()" id="leaveSessionBtn" disabled>🚪 Leave Session</button>
+        </div>
+
+        <h2>4️⃣ WebRTC Signaling</h2>
+        <div>
+            <select id="targetUser">
+                <option value="">Select target user...</option>
+            </select>
+            <button onclick="sendTestOffer()" id="sendOfferBtn" disabled>📤 Send Test Offer</button>
+            <button onclick="sendTestAnswer()" id="sendAnswerBtn" disabled>📤 Send Test Answer</button>
+            <button onclick="sendTestIce()" id="sendIceBtn" disabled>📤 Send Test ICE Candidate</button>
+        </div>
+
+        <h2>5️⃣ Chat & Status</h2>
+        <div>
+            <input type="text" id="chatMessage" placeholder="Message to send...">
+            <button onclick="sendMessage()" id="sendMessageBtn" disabled>💬 Send Message</button>
+        </div>
+        <div>
+            <button onclick="toggleMute()" id="muteBtn" disabled>🎤 Toggle Mute</button>
+            <button onclick="toggleVideo()" id="videoBtn" disabled>📹 Toggle Video</button>
+        </div>
+
+        <h2>📊 Session Statistics</h2>
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-value" id="participantCount">0</div>
+                <div class="stat-label">Participants</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="messageCount">0</div>
+                <div class="stat-label">Messages Received</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-value" id="signalCount">0</div>
+                <div class="stat-label">Signals Received</div>
+            </div>
+        </div>
+
+        <h2>👥 Active Participants</h2>
+        <div id="participants" class="participants"></div>
+
+        <h2>📋 Real-Time Event Log</h2>
+        <div id="eventLog" class="log"></div>
+    </div>
+
+    <script>
+        let connection = null;
+        let token = null;
+        let currentUser = null;
+        let currentSession = null;
+        let stats = { participants: 0, messages: 0, signals: 0 };
+        let isMuted = false;
+        let isVideoEnabled = true;
+
+        function log(message, type = 'info') {
+            const logDiv = document.getElementById('eventLog');
+            const timestamp = new Date().toLocaleTimeString();
+            const entry = document.createElement('div');
+            entry.className = `log-entry ${type}`;
+            entry.innerHTML = `<span style="color: #858585;">[${timestamp}]</span> ${message}`;
+            logDiv.appendChild(entry);
+            logDiv.scrollTop = logDiv.scrollHeight;
+        }
+
+        function updateStatus(message, type = 'info') {
+            const statusDiv = document.getElementById('connectionStatus');
+            statusDiv.className = `status ${type}`;
+            statusDiv.textContent = message;
+        }
+
+        function updateStats() {
+            document.getElementById('participantCount').textContent = stats.participants;
+            document.getElementById('messageCount').textContent = stats.messages;
+            document.getElementById('signalCount').textContent = stats.signals;
+        }
+
+        async function login() {
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            
+            try {
+                log(`🔑 Logging in as ${email}...`, 'info');
+                const response = await fetch('http://localhost:5000/api/auth/login', {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) throw new Error('Login failed');
+                
+                const data = await response.json();
+                token = data.token;
+                currentUser = data.user;
+                
+                document.getElementById('authStatus').innerHTML = 
+                    `<div class="status success">✅ Logged in as: ${currentUser.username} (${currentUser.email})</div>`;
+                
+                log(`✅ Login successful! User: ${currentUser.username}`, 'success');
+                document.getElementById('connectBtn').disabled = false;
+            } catch (error) {
+                log(`❌ Login failed: ${error.message}`, 'error');
+                document.getElementById('authStatus').innerHTML = 
+                    `<div class="status error">❌ Login failed: ${error.message}</div>`;
+            }
+        }
+
+        async function connectSignalR() {
+            if (!token) {
+                log('❌ Please login first!', 'error');
+                return;
+            }
+
+            try {
+                log('🔌 Connecting to SignalR hub...', 'info');
+                
+                connection = new signalR.HubConnectionBuilder()
+                    .withUrl('http://localhost:5000/hubs/signaling', {
+                        accessTokenFactory: () => token
+                    })
+                    .withAutomaticReconnect()
+                    .configureLogging(signalR.LogLevel.Information)
+                    .build();
+
+                // Register event handlers
+                connection.on('UserJoined', (data) => {
+                    log(`👤 User joined: ${data.username}`, 'success');
+                    stats.participants++;
+                    updateStats();
+                    updateParticipants(data.participants);
+                    updateTargetUsers(data.participants);
+                });
+
+                connection.on('UserLeft', (data) => {
+                    log(`👤 User left: ${data.username}`, 'warning');
+                    stats.participants--;
+                    updateStats();
+                    updateParticipants(data.participants);
+                    updateTargetUsers(data.participants);
+                });
+
+                connection.on('ReceiveOffer', (data) => {
+                    log(`📥 Received WebRTC Offer from ${data.fromUsername}`, 'info');
+                    stats.signals++;
+                    updateStats();
+                    log(`SDP: ${data.offer.sdp.substring(0, 50)}...`, 'info');
+                });
+
+                connection.on('ReceiveAnswer', (data) => {
+                    log(`📥 Received WebRTC Answer from ${data.fromUsername}`, 'info');
+                    stats.signals++;
+                    updateStats();
+                    log(`SDP: ${data.answer.sdp.substring(0, 50)}...`, 'info');
+                });
+
+                connection.on('ReceiveIceCandidate', (data) => {
+                    log(`📥 Received ICE Candidate from ${data.fromUsername}`, 'info');
+                    stats.signals++;
+                    updateStats();
+                });
+
+                connection.on('ReceiveMessage', (data) => {
+                    log(`💬 Message from ${data.fromUsername}: ${data.message}`, 'success');
+                    stats.messages++;
+                    updateStats();
+                });
+
+                connection.on('UserStatusUpdated', (data) => {
+                    log(`🔔 ${data.username} status: Muted=${data.isMuted}, Video=${data.isVideoEnabled}`, 'info');
+                    updateParticipants(data.participants);
+                });
+
+                connection.onreconnecting(() => {
+                    log('🔄 Reconnecting...', 'warning');
+                    updateStatus('🔄 Reconnecting...', 'info');
+                });
+
+                connection.onreconnected(() => {
+                    log('✅ Reconnected!', 'success');
+                    updateStatus('✅ Connected to SignalR Hub', 'success');
+                });
+
+                connection.onclose(() => {
+                    log('🔌 Connection closed', 'error');
+                    updateStatus('🔌 Disconnected', 'error');
+                    document.getElementById('connectBtn').disabled = false;
+                    document.getElementById('disconnectBtn').disabled = true;
+                    disableSessionButtons();
+                });
+
+                await connection.start();
+                
+                log('✅ Connected to SignalR hub successfully!', 'success');
+                updateStatus('✅ Connected to SignalR Hub', 'success');
+                
+                document.getElementById('connectBtn').disabled = true;
+                document.getElementById('disconnectBtn').disabled = false;
+                document.getElementById('createSessionBtn').disabled = false;
+                document.getElementById('joinSessionBtn').disabled = false;
+
+            } catch (error) {
+                log(`❌ SignalR connection failed: ${error.message}`, 'error');
+                updateStatus(`❌ Connection failed: ${error.message}`, 'error');
+            }
+        }
+
+        async function disconnect() {
+            if (connection) {
+                await connection.stop();
+                log('🔌 Disconnected from SignalR hub', 'info');
+            }
+        }
+
+        async function createSession() {
+            const sessionName = document.getElementById('sessionName').value;
+            
+            try {
+                log(`➕ Creating session: ${sessionName}...`, 'info');
+                const response = await fetch('http://localhost:5000/api/session/create', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ name: sessionName, maxParticipants: 10 })
+                });
+
+                if (!response.ok) throw new Error('Failed to create session');
+                
+                const session = await response.json();
+                currentSession = session;
+                document.getElementById('joinSessionId').value = session.sessionId;
+                
+                log(`✅ Session created! ID: ${session.sessionId}`, 'success');
+                
+            } catch (error) {
+                log(`❌ Failed to create session: ${error.message}`, 'error');
+            }
+        }
+
+        async function joinSession() {
+            const sessionId = document.getElementById('joinSessionId').value;
+            
+            if (!sessionId) {
+                log('❌ Please enter a session ID', 'error');
+                return;
+            }
+
+            try {
+                log(`🚪 Joining session: ${sessionId}...`, 'info');
+                
+                // Join via REST API first
+                const response = await fetch('http://localhost:5000/api/session/join', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${token}`,
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ sessionId })
+                });
+
+                if (!response.ok) throw new Error('Failed to join session');
+                
+                currentSession = await response.json();
+                
+                // Then join via SignalR
+                await connection.invoke('JoinSession', sessionId);
+                
+                log(`✅ Joined session: ${currentSession.name}`, 'success');
+                log(`Participants: ${currentSession.currentParticipants}/${currentSession.maxParticipants}`, 'info');
+                
+                stats.participants = currentSession.currentParticipants;
+                updateStats();
+                updateParticipants(currentSession.participants);
+                updateTargetUsers(currentSession.participants);
+                
+                document.getElementById('leaveSessionBtn').disabled = false;
+                document.getElementById('sendOfferBtn').disabled = false;
+                document.getElementById('sendAnswerBtn').disabled = false;
+                document.getElementById('sendIceBtn').disabled = false;
+                document.getElementById('sendMessageBtn').disabled = false;
+                document.getElementById('muteBtn').disabled = false;
+                document.getElementById('videoBtn').disabled = false;
+                
+            } catch (error) {
+                log(`❌ Failed to join session: ${error.message}`, 'error');
+            }
+        }
+
+        async function leaveSession() {
+            if (!currentSession) return;
+            
+            try {
+                log('🚪 Leaving session...', 'info');
+                await connection.invoke('LeaveSession');
+                
+                log('✅ Left session', 'success');
+                currentSession = null;
+                disableSessionButtons();
+                
+            } catch (error) {
+                log(`❌ Failed to leave session: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendTestOffer() {
+            const targetUserId = document.getElementById('targetUser').value;
+            if (!targetUserId) {
+                log('❌ Please select a target user', 'error');
+                return;
+            }
+
+            const testOffer = {
+                type: 'offer',
+                sdp: 'v=0\r\no=- 123456789 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\n...'
+            };
+
+            try {
+                await connection.invoke('SendOffer', targetUserId, testOffer);
+                log(`📤 Sent test offer to user ${targetUserId}`, 'success');
+            } catch (error) {
+                log(`❌ Failed to send offer: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendTestAnswer() {
+            const targetUserId = document.getElementById('targetUser').value;
+            if (!targetUserId) {
+                log('❌ Please select a target user', 'error');
+                return;
+            }
+
+            const testAnswer = {
+                type: 'answer',
+                sdp: 'v=0\r\no=- 987654321 2 IN IP4 127.0.0.1\r\ns=-\r\nt=0 0\r\na=group:BUNDLE 0\r\n...'
+            };
+
+            try {
+                await connection.invoke('SendAnswer', targetUserId, testAnswer);
+                log(`📤 Sent test answer to user ${targetUserId}`, 'success');
+            } catch (error) {
+                log(`❌ Failed to send answer: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendTestIce() {
+            const targetUserId = document.getElementById('targetUser').value;
+            if (!targetUserId) {
+                log('❌ Please select a target user', 'error');
+                return;
+            }
+
+            const testIce = {
+                candidate: 'candidate:1 1 UDP 2130706431 192.168.1.100 54321 typ host',
+                sdpMLineIndex: 0,
+                sdpMid: '0'
+            };
+
+            try {
+                await connection.invoke('SendIceCandidate', targetUserId, testIce);
+                log(`📤 Sent test ICE candidate to user ${targetUserId}`, 'success');
+            } catch (error) {
+                log(`❌ Failed to send ICE: ${error.message}`, 'error');
+            }
+        }
+
+        async function sendMessage() {
+            const message = document.getElementById('chatMessage').value;
+            if (!message) return;
+
+            try {
+                await connection.invoke('SendMessage', message);
+                log(`💬 Sent: ${message}`, 'success');
+                document.getElementById('chatMessage').value = '';
+            } catch (error) {
+                log(`❌ Failed to send message: ${error.message}`, 'error');
+            }
+        }
+
+        async function toggleMute() {
+            isMuted = !isMuted;
+            try {
+                await connection.invoke('UpdateStatus', isMuted, isVideoEnabled);
+                log(`🎤 Mute: ${isMuted}`, 'info');
+                document.getElementById('muteBtn').textContent = isMuted ? '🎤 Unmute' : '🎤 Mute';
+            } catch (error) {
+                log(`❌ Failed to update status: ${error.message}`, 'error');
+            }
+        }
+
+        async function toggleVideo() {
+            isVideoEnabled = !isVideoEnabled;
+            try {
+                await connection.invoke('UpdateStatus', isMuted, isVideoEnabled);
+                log(`📹 Video: ${isVideoEnabled}`, 'info');
+                document.getElementById('videoBtn').textContent = isVideoEnabled ? '📹 Disable Video' : '📹 Enable Video';
+            } catch (error) {
+                log(`❌ Failed to update status: ${error.message}`, 'error');
+            }
+        }
+
+        function updateParticipants(participants) {
+            const container = document.getElementById('participants');
+            container.innerHTML = '';
+            
+            if (!participants || participants.length === 0) {
+                container.innerHTML = '<p style="color: #666;">No participants yet</p>';
+                return;
+            }
+
+            participants.forEach(p => {
+                const card = document.createElement('div');
+                card.className = 'participant-card' + (p.userId === currentUser.id ? ' me' : '');
+                card.innerHTML = `
+                    <strong>${p.username}</strong>${p.userId === currentUser.id ? ' (You)' : ''}<br>
+                    <small>🎤 ${p.isMuted ? 'Muted' : 'Unmuted'}</small><br>
+                    <small>📹 ${p.isVideoEnabled ? 'Video On' : 'Video Off'}</small>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        function updateTargetUsers(participants) {
+            const select = document.getElementById('targetUser');
+            select.innerHTML = '<option value="">Select target user...</option>';
+            
+            if (!participants) return;
+            
+            participants.forEach(p => {
+                if (p.userId !== currentUser.id) {
+                    const option = document.createElement('option');
+                    option.value = p.userId;
+                    option.textContent = p.username;
+                    select.appendChild(option);
+                }
+            });
+        }
+
+        function disableSessionButtons() {
+            document.getElementById('leaveSessionBtn').disabled = true;
+            document.getElementById('sendOfferBtn').disabled = true;
+            document.getElementById('sendAnswerBtn').disabled = true;
+            document.getElementById('sendIceBtn').disabled = true;
+            document.getElementById('sendMessageBtn').disabled = true;
+            document.getElementById('muteBtn').disabled = true;
+            document.getElementById('videoBtn').disabled = true;
+        }
+
+        // Initialize
+        log('🚀 TunRTC SignalR Test Suite Ready!', 'success');
+        log('📌 Step 1: Login with credentials', 'info');
+        log('📌 Step 2: Connect to SignalR Hub', 'info');
+        log('📌 Step 3: Create or Join a Session', 'info');
+        log('📌 Step 4: Test WebRTC signaling and chat', 'info');
+    </script>
+</body>
+</html>

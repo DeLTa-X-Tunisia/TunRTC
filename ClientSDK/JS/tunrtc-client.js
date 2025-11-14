@@ -16,7 +16,7 @@ class TunRTCClient {
         this.sessionId = null;
         this.userId = null;
         this.username = null;
-        
+
         // Event callbacks
         this.onLocalStream = null;
         this.onRemoteStream = null;
@@ -270,7 +270,7 @@ class TunRTCClient {
         // Handle participant joined
         this.connection.on('ParticipantJoined', async (data) => {
             console.log('Participant joined:', data);
-            
+
             if (this.onParticipantJoined) {
                 this.onParticipantJoined(data);
             }
@@ -283,7 +283,7 @@ class TunRTCClient {
         // Handle participant left
         this.connection.on('ParticipantLeft', (data) => {
             console.log('Participant left:', data);
-            
+
             if (this.onParticipantLeft) {
                 this.onParticipantLeft(data);
             }
@@ -457,7 +457,7 @@ class TunRTCClient {
      */
     async disconnect() {
         await this.leaveSession();
-        
+
         if (this.connection) {
             await this.connection.stop();
             this.connection = null;

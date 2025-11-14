@@ -11,7 +11,7 @@ public class Session
     public DateTime? EndedAt { get; set; }
     public SessionStatus Status { get; set; } = SessionStatus.Active;
     public SessionType Type { get; set; } = SessionType.VideoCall;
-    
+
     // Navigation properties
     public User Creator { get; set; } = null!;
     public ICollection<SessionParticipant> Participants { get; set; } = new List<SessionParticipant>();

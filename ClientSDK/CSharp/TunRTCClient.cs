@@ -86,7 +86,7 @@ public class TunRTCClient : IAsyncDisposable
     {
         if (!string.IsNullOrEmpty(_token))
         {
-            _httpClient.DefaultRequestHeaders.Authorization = 
+            _httpClient.DefaultRequestHeaders.Authorization =
                 new AuthenticationHeaderValue("Bearer", _token);
         }
     }

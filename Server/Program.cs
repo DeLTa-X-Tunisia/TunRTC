@@ -18,12 +18,24 @@ var jwtAudience = builder.Configuration["Jwt:Audience"] ?? "TunRTC.Users";
 builder.Services.AddControllers();
 builder.Services.AddSignalR();
 
-// Configure PostgreSQL
-builder.Services.AddDbContext<TunRTCContext>(options =>
-    options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection") 
-        ?? "Host=localhost;Database=tunrtc;Username=postgres;Password=postgres"));
+// Configure Database (PostgreSQL or InMemory for testing)
+var connectionString = builder.Configuration.GetConnectionString("DefaultConnection");
+var useInMemory = string.IsNullOrEmpty(connectionString) ||
+                  builder.Configuration.GetValue<bool>("UseInMemoryDatabase", false);
 
-// Configure JWT Authentication
+builder.Services.AddDbContext<TunRTCContext>(options =>
+{
+    if (useInMemory)
+    {
+        options.UseInMemoryDatabase("TunRTC");
+        Console.WriteLine("🧪 Using InMemory Database for testing");
+    }
+    else
+    {
+        options.UseNpgsql(connectionString);
+        Console.WriteLine("📊 Using PostgreSQL Database");
+    }
+});// Configure JWT Authentication
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer(options =>
     {
@@ -140,11 +152,20 @@ app.MapHub<SignalingHub>("/hubs/signaling");
 // Health check
 app.MapGet("/health", () => Results.Ok(new { status = "healthy", timestamp = DateTime.UtcNow }));
 
-// Auto-migrate database on startup
+// Auto-migrate database on startup and seed test data
 using (var scope = app.Services.CreateScope())
 {
     var db = scope.ServiceProvider.GetRequiredService<TunRTCContext>();
-    db.Database.Migrate();
+
+    if (useInMemory)
+    {
+        db.Database.EnsureCreated();
+        DatabaseSeeder.SeedTestData(db);
+    }
+    else
+    {
+        db.Database.Migrate();
+    }
 }
 
 app.Run();

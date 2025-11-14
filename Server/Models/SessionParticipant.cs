@@ -11,7 +11,7 @@ public class SessionParticipant
     public ParticipantStatus Status { get; set; } = ParticipantStatus.Connected;
     public bool IsMuted { get; set; } = false;
     public bool IsVideoEnabled { get; set; } = true;
-    
+
     // Navigation properties
     public Session Session { get; set; } = null!;
     public User User { get; set; } = null!;

@@ -1,0 +1,628 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🧪 TunRTC Test Suite</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        h1 {
+            color: white;
+            margin-bottom: 30px;
+            text-align: center;
+            font-size: 2.5em;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .test-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+            gap: 20px;
+        }
+
+        .test-card {
+            background: white;
+            border-radius: 12px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .test-card h2 {
+            color: #333;
+            margin-bottom: 15px;
+            border-bottom: 3px solid #667eea;
+            padding-bottom: 10px;
+        }
+
+        .test-step {
+            margin: 15px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+
+        .test-step h3 {
+            color: #667eea;
+            margin-bottom: 10px;
+            font-size: 1.1em;
+        }
+
+        button {
+            padding: 12px 24px;
+            margin: 10px 5px 10px 0;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: bold;
+            transition: transform 0.2s;
+        }
+
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+
+        button:disabled {
+            background: #ccc;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        input {
+            padding: 10px;
+            margin: 5px 0;
+            border: 2px solid #e0e0e0;
+            border-radius: 6px;
+            font-size: 14px;
+            width: 100%;
+            transition: border 0.3s;
+        }
+
+        input:focus {
+            outline: none;
+            border-color: #667eea;
+        }
+
+        .result {
+            padding: 12px;
+            margin: 10px 0;
+            border-radius: 6px;
+            font-family: 'Courier New', monospace;
+            font-size: 13px;
+            max-height: 200px;
+            overflow-y: auto;
+        }
+
+        .success {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+        }
+
+        .error {
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            color: #721c24;
+        }
+
+        .info {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            color: #0c5460;
+        }
+
+        .status {
+            display: inline-block;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 12px;
+            font-weight: bold;
+            margin-left: 10px;
+        }
+
+        .status.pass {
+            background: #28a745;
+            color: white;
+        }
+
+        .status.fail {
+            background: #dc3545;
+            color: white;
+        }
+
+        .status.pending {
+            background: #ffc107;
+            color: #333;
+        }
+
+        #console {
+            background: #1e1e1e;
+            color: #00ff00;
+            padding: 15px;
+            border-radius: 8px;
+            max-height: 300px;
+            overflow-y: auto;
+            font-family: 'Courier New', monospace;
+            font-size: 12px;
+            margin-top: 20px;
+        }
+
+        .log-entry {
+            margin: 5px 0;
+        }
+
+        .log-success {
+            color: #00ff00;
+        }
+
+        .log-error {
+            color: #ff4444;
+        }
+
+        .log-info {
+            color: #4da6ff;
+        }
+
+        .stats {
+            display: flex;
+            justify-content: space-around;
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 20px;
+        }
+
+        .stat-box {
+            text-align: center;
+        }
+
+        .stat-number {
+            font-size: 3em;
+            font-weight: bold;
+            color: #667eea;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 0.9em;
+            margin-top: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="container">
+        <h1>🧪 TunRTC Test Suite</h1>
+
+        <div class="stats">
+            <div class="stat-box">
+                <div class="stat-number" id="stat-total">0</div>
+                <div class="stat-label">Total Tests</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-passed" style="color: #28a745;">0</div>
+                <div class="stat-label">Passed</div>
+            </div>
+            <div class="stat-box">
+                <div class="stat-number" id="stat-failed" style="color: #dc3545;">0</div>
+                <div class="stat-label">Failed</div>
+            </div>
+        </div>
+
+        <div class="test-grid">
+            <!-- Phase 1: Backend Tests -->
+            <div class="test-card">
+                <h2>🔧 Phase 1: Backend Tests</h2>
+                <div class="test-step">
+                    <h3>Health Check</h3>
+                    <button onclick="testHealthCheck()">Test Health</button>
+                    <div id="result-health"></div>
+                </div>
+                <div class="test-step">
+                    <h3>Swagger UI</h3>
+                    <button onclick="window.open('http://localhost:5000', '_blank')">Open Swagger</button>
+                </div>
+            </div>
+
+            <!-- Phase 2: Authentication -->
+            <div class="test-card">
+                <h2>🔐 Phase 2: Authentication</h2>
+                <div class="test-step">
+                    <h3>Login</h3>
+                    <input type="email" id="login-email" placeholder="Email" value="demo@tunrtc.com">
+                    <input type="password" id="login-password" placeholder="Password" value="demo123">
+                    <button onclick="testLogin()">Test Login</button>
+                    <div id="result-login"></div>
+                </div>
+                <div class="test-step">
+                    <h3>Get Current User</h3>
+                    <button onclick="testGetMe()" id="btn-getme" disabled>Test /auth/me</button>
+                    <div id="result-getme"></div>
+                </div>
+            </div>
+
+            <!-- Phase 3: Session Management -->
+            <div class="test-card">
+                <h2>📹 Phase 3: Session Management</h2>
+                <div class="test-step">
+                    <h3>Create Session</h3>
+                    <input type="text" id="session-name" placeholder="Session Name" value="Test Call">
+                    <button onclick="testCreateSession()" id="btn-create" disabled>Create Session</button>
+                    <div id="result-create"></div>
+                </div>
+                <div class="test-step">
+                    <h3>Join Session</h3>
+                    <input type="text" id="session-id" placeholder="Session ID" readonly>
+                    <button onclick="testJoinSession()" id="btn-join" disabled>Join Session</button>
+                    <div id="result-join"></div>
+                </div>
+                <div class="test-step">
+                    <h3>Get Active Sessions</h3>
+                    <button onclick="testGetActiveSessions()" id="btn-active" disabled>Get Active Sessions</button>
+                    <div id="result-active"></div>
+                </div>
+            </div>
+
+            <!-- Phase 4: ICE Servers -->
+            <div class="test-card">
+                <h2>🌐 Phase 4: ICE Servers</h2>
+                <div class="test-step">
+                    <h3>Get ICE Configuration</h3>
+                    <button onclick="testGetIceServers()" id="btn-ice" disabled>Get ICE Servers</button>
+                    <div id="result-ice"></div>
+                </div>
+            </div>
+
+            <!-- Phase 5: SignalR Hub -->
+            <div class="test-card">
+                <h2>⚡ Phase 5: SignalR Tests</h2>
+                <div class="test-step">
+                    <h3>Connect to Hub</h3>
+                    <button onclick="testSignalRConnect()" id="btn-signalr" disabled>Connect SignalR</button>
+                    <div id="result-signalr"></div>
+                </div>
+                <div class="test-step">
+                    <h3>Send Message</h3>
+                    <input type="text" id="message-text" placeholder="Test message" value="Hello from test!">
+                    <button onclick="testSendMessage()" id="btn-message" disabled>Send Message</button>
+                    <div id="result-message"></div>
+                </div>
+            </div>
+
+            <!-- Run All Tests -->
+            <div class="test-card" style="grid-column: 1 / -1;">
+                <h2>🚀 Run All Tests</h2>
+                <button onclick="runAllTests()" style="font-size: 18px; padding: 15px 40px;">Run Full Test
+                    Suite</button>
+                <button onclick="clearConsole()" style="background: #6c757d;">Clear Console</button>
+            </div>
+        </div>
+
+        <!-- Console Log -->
+        <div id="console">
+            <div class="log-info">🧪 TunRTC Test Console - Ready</div>
+            <div class="log-info">📡 Server: http://localhost:5000</div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/@microsoft/signalr@8.0.0/dist/browser/signalr.min.js"></script>
+    <script>
+        const API_URL = 'http://localhost:5000/api';
+        const HUB_URL = 'http://localhost:5000/hubs/signaling';
+        let token = null;
+        let connection = null;
+        let currentSessionId = null;
+        let stats = { total: 0, passed: 0, failed: 0 };
+
+        function log(message, type = 'info') {
+            const console = document.getElementById('console');
+            const entry = document.createElement('div');
+            entry.className = `log-entry log-${type}`;
+            entry.textContent = `[${new Date().toLocaleTimeString()}] ${message}`;
+            console.appendChild(entry);
+            console.scrollTop = console.scrollHeight;
+        }
+
+        function updateStats() {
+            document.getElementById('stat-total').textContent = stats.total;
+            document.getElementById('stat-passed').textContent = stats.passed;
+            document.getElementById('stat-failed').textContent = stats.failed;
+        }
+
+        function showResult(elementId, data, success = true) {
+            const element = document.getElementById(elementId);
+            element.className = `result ${success ? 'success' : 'error'}`;
+            element.textContent = typeof data === 'object' ? JSON.stringify(data, null, 2) : data;
+        }
+
+        function clearConsole() {
+            document.getElementById('console').innerHTML = '<div class="log-info">Console cleared</div>';
+        }
+
+        async function testHealthCheck() {
+            stats.total++;
+            log('Testing health check endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/../health`);
+                const data = await response.json();
+                log('✅ Health check passed!', 'success');
+                showResult('result-health', data, true);
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Health check failed: ${error.message}`, 'error');
+                showResult('result-health', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testLogin() {
+            stats.total++;
+            const email = document.getElementById('login-email').value;
+            const password = document.getElementById('login-password').value;
+            log(`Testing login with ${email}...`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/auth/login`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+
+                if (!response.ok) throw new Error('Login failed');
+
+                const data = await response.json();
+                token = data.token;
+                log('✅ Login successful!', 'success');
+                showResult('result-login', data, true);
+
+                // Enable other buttons
+                document.getElementById('btn-getme').disabled = false;
+                document.getElementById('btn-create').disabled = false;
+                document.getElementById('btn-active').disabled = false;
+                document.getElementById('btn-ice').disabled = false;
+                document.getElementById('btn-signalr').disabled = false;
+
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Login failed: ${error.message}`, 'error');
+                showResult('result-login', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testGetMe() {
+            stats.total++;
+            log('Testing /auth/me endpoint...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/auth/me`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                log('✅ Get current user successful!', 'success');
+                showResult('result-getme', data, true);
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Get me failed: ${error.message}`, 'error');
+                showResult('result-getme', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testCreateSession() {
+            stats.total++;
+            const name = document.getElementById('session-name').value;
+            log(`Creating session: ${name}...`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/session/create`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name, maxParticipants: 10, type: 1 })
+                });
+
+                const data = await response.json();
+                currentSessionId = data.sessionId;
+                document.getElementById('session-id').value = currentSessionId;
+                log(`✅ Session created: ${currentSessionId}`, 'success');
+                showResult('result-create', data, true);
+                document.getElementById('btn-join').disabled = false;
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Create session failed: ${error.message}`, 'error');
+                showResult('result-create', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testJoinSession() {
+            stats.total++;
+            const sessionId = document.getElementById('session-id').value;
+            log(`Joining session: ${sessionId}...`, 'info');
+
+            try {
+                const response = await fetch(`${API_URL}/session/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ sessionId })
+                });
+
+                const data = await response.json();
+                log('✅ Joined session successfully!', 'success');
+                showResult('result-join', data, true);
+                document.getElementById('btn-message').disabled = false;
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Join session failed: ${error.message}`, 'error');
+                showResult('result-join', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testGetActiveSessions() {
+            stats.total++;
+            log('Getting active sessions...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/session/active`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                log(`✅ Found ${data.length} active sessions`, 'success');
+                showResult('result-active', data, true);
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Get sessions failed: ${error.message}`, 'error');
+                showResult('result-active', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testGetIceServers() {
+            stats.total++;
+            log('Getting ICE servers configuration...', 'info');
+            try {
+                const response = await fetch(`${API_URL}/iceservers`, {
+                    headers: { 'Authorization': `Bearer ${token}` }
+                });
+                const data = await response.json();
+                log(`✅ ICE servers retrieved: ${data.iceServers.length} servers`, 'success');
+                showResult('result-ice', data, true);
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Get ICE servers failed: ${error.message}`, 'error');
+                showResult('result-ice', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testSignalRConnect() {
+            stats.total++;
+            log('Connecting to SignalR hub...', 'info');
+
+            try {
+                connection = new signalR.HubConnectionBuilder()
+                    .withUrl(HUB_URL, {
+                        accessTokenFactory: () => token
+                    })
+                    .withAutomaticReconnect()
+                    .build();
+
+                connection.on('ReceiveMessage', (data) => {
+                    log(`📨 Message received: ${data.message}`, 'info');
+                });
+
+                connection.on('ParticipantJoined', (data) => {
+                    log(`👤 Participant joined: ${data.connectionId}`, 'info');
+                });
+
+                await connection.start();
+                log('✅ SignalR connected successfully!', 'success');
+                showResult('result-signalr', 'Connected to SignalR hub', true);
+
+                if (currentSessionId) {
+                    await connection.invoke('JoinSession', currentSessionId);
+                    log(`✅ Joined SignalR session: ${currentSessionId}`, 'success');
+                }
+
+                stats.passed++;
+            } catch (error) {
+                log(`❌ SignalR connection failed: ${error.message}`, 'error');
+                showResult('result-signalr', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function testSendMessage() {
+            stats.total++;
+            const message = document.getElementById('message-text').value;
+            log(`Sending message: "${message}"...`, 'info');
+
+            try {
+                if (!connection || !currentSessionId) {
+                    throw new Error('Not connected to hub or no active session');
+                }
+
+                await connection.invoke('SendMessage', currentSessionId, message);
+                log('✅ Message sent successfully!', 'success');
+                showResult('result-message', 'Message sent', true);
+                stats.passed++;
+            } catch (error) {
+                log(`❌ Send message failed: ${error.message}`, 'error');
+                showResult('result-message', error.message, false);
+                stats.failed++;
+            }
+            updateStats();
+        }
+
+        async function runAllTests() {
+            log('🚀 Starting full test suite...', 'info');
+            stats = { total: 0, passed: 0, failed: 0 };
+
+            await testHealthCheck();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testLogin();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testGetMe();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testCreateSession();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testJoinSession();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testGetActiveSessions();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testGetIceServers();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testSignalRConnect();
+            await new Promise(r => setTimeout(r, 500));
+
+            await testSendMessage();
+
+            log('✅ Full test suite completed!', 'success');
+            log(`📊 Results: ${stats.passed}/${stats.total} tests passed`,
+                stats.failed === 0 ? 'success' : 'error');
+        }
+    </script>
+</body>
+
+</html>

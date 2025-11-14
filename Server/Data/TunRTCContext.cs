@@ -36,7 +36,7 @@ public class TunRTCContext : DbContext
             entity.HasIndex(e => e.SessionId).IsUnique();
             entity.Property(e => e.SessionId).IsRequired().HasMaxLength(50);
             entity.Property(e => e.Name).IsRequired().HasMaxLength(100);
-            
+
             entity.HasOne(e => e.Creator)
                   .WithMany(u => u.CreatedSessions)
                   .HasForeignKey(e => e.CreatorId)
@@ -48,12 +48,12 @@ public class TunRTCContext : DbContext
         {
             entity.HasKey(e => e.Id);
             entity.HasIndex(e => e.ConnectionId);
-            
+
             entity.HasOne(e => e.Session)
                   .WithMany(s => s.Participants)
                   .HasForeignKey(e => e.SessionId)
                   .OnDelete(DeleteBehavior.Cascade);
-            
+
             entity.HasOne(e => e.User)
                   .WithMany(u => u.Participants)
                   .HasForeignKey(e => e.UserId)

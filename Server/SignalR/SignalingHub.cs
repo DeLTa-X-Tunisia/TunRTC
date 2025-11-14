@@ -37,11 +37,11 @@ public class SignalingHub : Hub
     {
         var userId = GetUserId();
         _logger.LogInformation("User {UserId} connected with ConnectionId {ConnectionId}", userId, Context.ConnectionId);
-        
+
         // Log connection
         var ipAddress = Context.GetHttpContext()?.Connection.RemoteIpAddress?.ToString() ?? "Unknown";
         var userAgent = Context.GetHttpContext()?.Request.Headers["User-Agent"].ToString() ?? "Unknown";
-        
+
         _context.ConnectionLogs.Add(new Models.ConnectionLog
         {
             UserId = userId,
@@ -51,7 +51,7 @@ public class SignalingHub : Hub
             ConnectedAt = DateTime.UtcNow
         });
         await _context.SaveChangesAsync();
-        
+
         await base.OnConnectedAsync();
     }
 
@@ -59,11 +59,11 @@ public class SignalingHub : Hub
     {
         var userId = GetUserId();
         var connectionInfo = _connectionManager.GetConnectionInfo(Context.ConnectionId);
-        
+
         if (connectionInfo.HasValue)
         {
             var (_, sessionId) = connectionInfo.Value;
-            
+
             // Notify other participants
             await Clients.OthersInGroup(sessionId).SendAsync("ParticipantLeft", new
             {
@@ -71,21 +71,21 @@ public class SignalingHub : Hub
                 connectionId = Context.ConnectionId,
                 timestamp = DateTime.UtcNow
             });
-            
+
             _connectionManager.RemoveConnection(Context.ConnectionId);
         }
-        
+
         // Update connection log
         var log = await _context.ConnectionLogs
             .FirstOrDefaultAsync(l => l.ConnectionId == Context.ConnectionId && l.DisconnectedAt == null);
-        
+
         if (log != null)
         {
             log.DisconnectedAt = DateTime.UtcNow;
             log.DisconnectReason = exception?.Message ?? "Normal disconnect";
             await _context.SaveChangesAsync();
         }
-        
+
         _logger.LogInformation("User {UserId} disconnected from ConnectionId {ConnectionId}", userId, Context.ConnectionId);
         await base.OnDisconnectedAsync(exception);
     }
@@ -96,18 +96,18 @@ public class SignalingHub : Hub
     public async Task JoinSession(string sessionId)
     {
         var userId = GetUserId();
-        
+
         var session = await _sessionService.JoinSessionAsync(userId, sessionId, Context.ConnectionId);
-        
+
         if (session == null)
         {
             await Clients.Caller.SendAsync("Error", new { message = "Failed to join session" });
             return;
         }
-        
+
         await Groups.AddToGroupAsync(Context.ConnectionId, sessionId);
         _connectionManager.AddConnection(Context.ConnectionId, userId, sessionId);
-        
+
         // Notify others in the session
         await Clients.OthersInGroup(sessionId).SendAsync("ParticipantJoined", new
         {
@@ -115,7 +115,7 @@ public class SignalingHub : Hub
             connectionId = Context.ConnectionId,
             timestamp = DateTime.UtcNow
         });
-        
+
         _logger.LogInformation("User {UserId} joined session {SessionId}", userId, sessionId);
     }
 
@@ -125,18 +125,18 @@ public class SignalingHub : Hub
     public async Task LeaveSession(string sessionId)
     {
         var userId = GetUserId();
-        
+
         await _sessionService.LeaveSessionAsync(userId, sessionId);
         await Groups.RemoveFromGroupAsync(Context.ConnectionId, sessionId);
         _connectionManager.RemoveConnection(Context.ConnectionId);
-        
+
         await Clients.OthersInGroup(sessionId).SendAsync("ParticipantLeft", new
         {
             userId,
             connectionId = Context.ConnectionId,
             timestamp = DateTime.UtcNow
         });
-        
+
         _logger.LogInformation("User {UserId} left session {SessionId}", userId, sessionId);
     }
 
@@ -146,7 +146,7 @@ public class SignalingHub : Hub
     public async Task SendOffer(string targetConnectionId, object offer)
     {
         var userId = GetUserId();
-        
+
         await Clients.Client(targetConnectionId).SendAsync("ReceiveOffer", new
         {
             fromConnectionId = Context.ConnectionId,
@@ -154,7 +154,7 @@ public class SignalingHub : Hub
             offer,
             timestamp = DateTime.UtcNow
         });
-        
+
         _logger.LogDebug("Offer sent from {From} to {To}", Context.ConnectionId, targetConnectionId);
     }
 
@@ -164,7 +164,7 @@ public class SignalingHub : Hub
     public async Task SendAnswer(string targetConnectionId, object answer)
     {
         var userId = GetUserId();
-        
+
         await Clients.Client(targetConnectionId).SendAsync("ReceiveAnswer", new
         {
             fromConnectionId = Context.ConnectionId,
@@ -172,7 +172,7 @@ public class SignalingHub : Hub
             answer,
             timestamp = DateTime.UtcNow
         });
-        
+
         _logger.LogDebug("Answer sent from {From} to {To}", Context.ConnectionId, targetConnectionId);
     }
 
@@ -187,7 +187,7 @@ public class SignalingHub : Hub
             candidate,
             timestamp = DateTime.UtcNow
         });
-        
+
         _logger.LogDebug("ICE candidate sent from {From} to {To}", Context.ConnectionId, targetConnectionId);
     }
 
@@ -197,9 +197,9 @@ public class SignalingHub : Hub
     public async Task UpdateStatus(string sessionId, bool isMuted, bool isVideoEnabled)
     {
         var userId = GetUserId();
-        
+
         await _sessionService.UpdateParticipantStatusAsync(Context.ConnectionId, isMuted, isVideoEnabled);
-        
+
         await Clients.OthersInGroup(sessionId).SendAsync("ParticipantStatusChanged", new
         {
             userId,
@@ -208,8 +208,8 @@ public class SignalingHub : Hub
             isVideoEnabled,
             timestamp = DateTime.UtcNow
         });
-        
-        _logger.LogDebug("Status updated for user {UserId}: Muted={Muted}, Video={Video}", 
+
+        _logger.LogDebug("Status updated for user {UserId}: Muted={Muted}, Video={Video}",
             userId, isMuted, isVideoEnabled);
     }
 
@@ -220,7 +220,7 @@ public class SignalingHub : Hub
     {
         var userId = GetUserId();
         var username = Context.User?.FindFirst(ClaimTypes.Name)?.Value ?? "Unknown";
-        
+
         await Clients.Group(sessionId).SendAsync("ReceiveMessage", new
         {
             userId,
@@ -228,7 +228,7 @@ public class SignalingHub : Hub
             message,
             timestamp = DateTime.UtcNow
         });
-        
+
         _logger.LogDebug("Message sent by {Username} in session {SessionId}", username, sessionId);
     }
 }

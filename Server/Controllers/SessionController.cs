@@ -51,7 +51,7 @@ public class SessionController : ControllerBase
         }
 
         var session = await _sessionService.CreateSessionAsync(userId, request);
-        
+
         if (session == null)
         {
             return BadRequest(new { message = "Failed to create session" });
@@ -83,7 +83,7 @@ public class SessionController : ControllerBase
         // Connection ID will be set when connecting via SignalR
         var connectionId = Guid.NewGuid().ToString();
         var session = await _sessionService.JoinSessionAsync(userId, request.SessionId, connectionId);
-        
+
         if (session == null)
         {
             return NotFound(new { message = "Session not found or is full" });
@@ -102,7 +102,7 @@ public class SessionController : ControllerBase
     public async Task<IActionResult> GetSession(string sessionId)
     {
         var session = await _sessionService.GetSessionAsync(sessionId);
-        
+
         if (session == null)
         {
             return NotFound(new { message = "Session not found" });
@@ -137,7 +137,7 @@ public class SessionController : ControllerBase
         }
 
         var success = await _sessionService.LeaveSessionAsync(userId, request.SessionId);
-        
+
         if (!success)
         {
             return NotFound(new { message = "Session not found or user not in session" });
@@ -162,7 +162,7 @@ public class SessionController : ControllerBase
         }
 
         var success = await _sessionService.EndSessionAsync(userId, request.SessionId);
-        
+
         if (!success)
         {
             return Forbid();
