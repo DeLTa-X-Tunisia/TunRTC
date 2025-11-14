@@ -70,7 +70,7 @@ Similaire à **Agora** ou **Twilio**, mais **100% open source**, **gratuit** et 
 ### 1. Clone le Repository
 
 ```bash
-git clone https://github.com/yourorg/TunRTC.git
+git clone https://github.com/DeLTa-X-Tunisia/TunRTC.git
 cd TunRTC
 ```
 
@@ -392,8 +392,8 @@ Ce projet est sous licence **MIT**. Voir [LICENSE](LICENSE) pour plus de détail
 
 ## 💬 Support
 
-- **Issues:** [GitHub Issues](https://github.com/yourorg/TunRTC/issues)
-- **Discussions:** [GitHub Discussions](https://github.com/yourorg/TunRTC/discussions)
+- **Issues:** [GitHub Issues](https://github.com/DeLTa-X-Tunisia/TunRTC/issues)
+- **Discussions:** [GitHub Discussions](https://github.com/DeLTa-X-Tunisia/TunRTC/discussions)
 - **Email:** support@tunrtc.com
 
 ---

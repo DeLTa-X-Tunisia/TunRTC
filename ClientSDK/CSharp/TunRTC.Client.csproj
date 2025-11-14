@@ -11,7 +11,7 @@
     <Description>C# SDK for TunRTC WebRTC server - Easy integration for voice and video communication</Description>
     <PackageTags>webrtc;video;audio;signaling;realtime</PackageTags>
     <PackageLicenseExpression>MIT</PackageLicenseExpression>
-    <RepositoryUrl>https://github.com/yourorg/TunRTC</RepositoryUrl>
+    <RepositoryUrl>https://github.com/DeLTa-X-Tunisia/TunRTC</RepositoryUrl>
   </PropertyGroup>
 
   <ItemGroup>

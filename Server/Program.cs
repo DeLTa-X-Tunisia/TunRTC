@@ -85,7 +85,7 @@ builder.Services.AddSwaggerGen(c =>
         Contact = new OpenApiContact
         {
             Name = "TunRTC Project",
-            Url = new Uri("https://github.com/yourorg/TunRTC")
+            Url = new Uri("https://github.com/DeLTa-X-Tunisia/TunRTC")
         }
     });
 
