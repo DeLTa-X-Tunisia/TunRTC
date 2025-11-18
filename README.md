@@ -14,7 +14,8 @@ Alternative open-source à Agora.io, Twilio Video, et autres services WebRTC pro
 
 <p align="center">
   <img src="https://img.shields.io/badge/Author-Azizi%20Mounir-blue?style=for-the-badge" alt="Author: Azizi Mounir">
-  <img src="https://img.shields.io/badge/Phone-%2B216%2027%20774%20075%20🇹🇳-006400?style=for-the-badge" alt="Phone: +21627774075">
+  <img src="https://upload.wikimedia.org/wikipedia/commons/c/ce/Flag_of_Tunisia.svg" alt="Flag of Tunisia" width="60" height="40">
+  <img src="https://img.shields.io/badge/Phone-%2B216%2027%20774%20075-006400?style=for-the-badge" alt="Phone: +21627774075">
 </p>
 
 [🌐 Démo](http://localhost:5000/swagger) • [📖 Documentation](./Docs) • [🧪 Tests](./Tests) • [💻 SDKs](./SDKs)
